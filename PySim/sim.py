@@ -1,9 +1,10 @@
 locs = [0*17 + 8, 16*17 + 8]
-num_walls = (10, 10)
+num_walls = [10, 10]
 walls = set();
 turn = 0;
 
 def wall(k):
+    global turn
     if ((k % 17) > 15) or (k > 17*16):
         return "wall placement out of bounds"
     if (k//17 % 2) and  not ((k % 17) % 2):
@@ -27,10 +28,11 @@ def wall(k):
     return "uknown error"
 
 def move(direction):
+    global turn
     if (direction == "w"):
         if (locs[turn] - 34 < 0):
             return "out of bounds"
-        elif (locs_turn - 17) in walls:
+        elif (locs[turn] - 17) in walls:
             return "wall in the way"
         else: 
             locs[turn] -= 34
@@ -39,7 +41,7 @@ def move(direction):
     if (direction == "s"):
         if (locs[turn] + 34 >= 17*17):
             return "out of bounds"
-        elif (locs_turn + 17) in walls:
+        elif (locs[turn] + 17) in walls:
             return "wall in the way"
         else: 
             locs[turn] += 34
@@ -48,7 +50,7 @@ def move(direction):
     if (direction == "d"):
         if (locs[turn] % 17 > 15):
             return "out of bounds"
-        elif (locs_turn + 1) in walls:
+        elif (locs[turn] + 1) in walls:
             return "wall in the way"
         else: 
             locs[turn] += 2
@@ -57,7 +59,7 @@ def move(direction):
     if (direction == "a"):
         if (locs[turn] % 17 < 2):
             return "out of bounds"
-        elif (locs_turn - 1) in walls:
+        elif (locs[turn] - 1) in walls:
             return "wall in the way"
         else: 
             locs[turn] -= 2
@@ -65,4 +67,29 @@ def move(direction):
             return
     return "invalid direction"
 
+def printboard():
+    boardstr = ""
+    for r in range(17):
+        for c in range(17):
+            if (r*17 + c) in walls:
+                boardstr += "\033[93m\u25A0\033[0m "
+            elif (r*17 + c) == locs[0]:
+                boardstr += "\033[91m\u25C9\033[0m "
+            elif (r*17 + c) == locs[1]:
+                boardstr += "\033[96m\u25D9\033[0m "
+            else:
+                boardstr += "\u25A0 "
+        boardstr += "\n"
+    print(boardstr)
 
+while (True):
+    choice = input("Player " + str(turn + 1) + "'s turn, move or wall? (type move/wall or m/w)")
+    if (choice == "m" or choice == "move"):
+        choice = input("w/a/s/d?")
+        move(choice)
+        printboard()
+    elif (choice == "w" or choice == "wall"):
+        choice = input("where would you like to place the wall?")
+        choice = int(choice)
+        wall(choice)
+        printboard()
