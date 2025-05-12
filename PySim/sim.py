@@ -29,38 +29,134 @@ def wall(k):
 
 def move(direction):
     global turn
-    if (direction == "w"):
+    if (direction[0] == "w"):
         if (locs[turn] - 34 < 0):
             return "out of bounds"
         elif (locs[turn] - 17) in walls:
             return "wall in the way"
+        ##CODE FOR HANDLING JUMP RULE
+        elif (locs[turn] - 34 == locs[turn^1]):
+            if (locs[turn] - 68 > 0) and (locs[turn] - 51) not in walls:
+                locs[turn] -= 68
+                turn = (turn ^ 1)
+                return
+            elif (len(direction) > 1 and direction[1] == "d"):
+                if (locs[turn] % 17 > 15):
+                    return "out of bounds"
+                elif (locs[turn] - 33) in walls:
+                    return "wall in the way"
+                else: 
+                    locs[turn] -= 32
+                    turn = (turn ^ 1)
+            elif (len(direction) > 1 and direction[1] == "a"):
+                if (locs[turn] % 17 < 2):
+                    return "out of bounds"
+                elif (locs[turn] - 35) in walls:
+                    return "wall in the way"
+                else: 
+                    locs[turn] -= 36
+                    turn = (turn ^ 1)
+                    return
+        ##END CODE FOR HANDLING JUMP RULE
         else: 
             locs[turn] -= 34
             turn = (turn ^ 1)
             return
-    if (direction == "s"):
+    if (direction[0] == "s"):
         if (locs[turn] + 34 >= 17*17):
             return "out of bounds"
         elif (locs[turn] + 17) in walls:
             return "wall in the way"
+        ##CODE FOR HANDLING JUMP RULE
+        elif (locs[turn] + 34 == locs[turn^1]):
+            if (locs[turn] + 68 > 0) and (locs[turn] + 51) not in walls:
+                locs[turn] += 68
+                turn = (turn ^ 1)
+                return
+            elif (len(direction) > 1 and direction[1] == "d"):
+                if (locs[turn] % 17 > 15):
+                    return "out of bounds"
+                elif (locs[turn] + 35) in walls:
+                    return "wall in the way"
+                else: 
+                    locs[turn] += 36
+                    turn = (turn ^ 1)
+            elif (len(direction) > 1 and direction[1] == "a"):
+                if (locs[turn] % 17 < 2):
+                    return "out of bounds"
+                elif (locs[turn] + 33) in walls:
+                    return "wall in the way"
+                else: 
+                    locs[turn] += 32
+                    turn = (turn ^ 1)
+                    return
+        ##END CODE FOR HANDLING JUMP RULE
         else: 
             locs[turn] += 34
             turn = (turn ^ 1)
             return
-    if (direction == "d"):
+    if (direction[0] == "d"):
         if (locs[turn] % 17 > 15):
             return "out of bounds"
         elif (locs[turn] + 1) in walls:
             return "wall in the way"
+        ##CODE FOR HANDLING JUMP RULE
+        elif (locs[turn] + 2 == locs[turn^1]):
+            if (locs[turn] + 4 > 0) and (locs[turn] + 3) not in walls:
+                locs[turn] += 4
+                turn = (turn ^ 1)
+                return
+            elif (len(direction) > 1 and direction[1] == "w"):
+                if (locs[turn] - 34 < 0):
+                    return "out of bounds"
+                elif (locs[turn] -33) in walls:
+                    return "wall in the way"
+                else: 
+                    locs[turn] -= 32
+                    turn = (turn ^ 1)
+            elif (len(direction) > 1 and direction[1] == "s"):
+                if (locs[turn] + 34 >= 17*17):
+                    return "out of bounds"
+                elif (locs[turn] + 35) in walls:
+                    return "wall in the way"
+                else: 
+                    locs[turn] += 36
+                    turn = (turn ^ 1)
+                    return
+        ##END CODE FOR HANDLING JUMP RULE
         else: 
             locs[turn] += 2
             turn = (turn ^ 1)
             return
-    if (direction == "a"):
+    if (direction[0] == "a"):
         if (locs[turn] % 17 < 2):
             return "out of bounds"
         elif (locs[turn] - 1) in walls:
             return "wall in the way"
+        ##CODE FOR HANDLING JUMP RULE
+        elif (locs[turn] - 2 == locs[turn^1]):
+            if (locs[turn] - 4 > 0) and (locs[turn] - 3) not in walls:
+                locs[turn] -= 4
+                turn = (turn ^ 1)
+                return
+            elif (len(direction) > 1 and direction[1] == "w"):
+                if (locs[turn] - 34 < 0):
+                    return "out of bounds"
+                elif (locs[turn] - 35) in walls:
+                    return "wall in the way"
+                else: 
+                    locs[turn] -= 36
+                    turn = (turn ^ 1)
+            elif (len(direction) > 1 and direction[1] == "s"):
+                if (locs[turn] + 34 >= 17*17):
+                    return "out of bounds"
+                elif (locs[turn] + 33) in walls:
+                    return "wall in the way"
+                else: 
+                    locs[turn] += 32
+                    turn = (turn ^ 1)
+                    return
+        ##END CODE FOR HANDLING JUMP RULE
         else: 
             locs[turn] -= 2
             turn = (turn ^ 1)
