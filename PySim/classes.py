@@ -6,6 +6,44 @@ class Board:
         self.turn = 0
         self.won = False
 
+    def canWin(self):
+        visited = set()
+        one_done = False
+        stack = []
+        stack.append(self.locs[0])
+        while not (one_done or len(stack) == 0):
+            curr = stack.pop()
+            if curr >= 16*17:
+                two_done = True
+            visited.add(curr)
+            if curr > 17 and curr - 17 not in self.walls:
+                stack.append(curr - 34)
+            if curr < 17*16 and curr + 17 not in self.walls:
+                stack.append(curr + 34)
+            if curr % 17 > 1 and curr - 1 not in self.walls:
+                stack.append(curr - 2)
+            if curr % 17 < 16 and curr + 1 not in self.walls:
+                stack.append(curr + 2)
+        
+        visited = set()
+        two_done = False
+        stack = []
+        stack.append(self.locs[1])
+        while not (two_done or len(stack) == 0):
+            curr = stack.pop()
+            if curr < 17:
+                two_done = True
+            visited.add(curr)
+            if curr > 17 and curr - 17 not in self.walls:
+                stack.append(curr - 34)
+            if curr < 17*16 and curr + 17 not in self.walls:
+                stack.append(curr + 34)
+            if curr % 17 > 1 and curr - 1 not in self.walls:
+                stack.append(curr - 2)
+            if curr % 17 < 16 and curr + 1 not in self.walls:
+                stack.append(curr + 2)
+        return two_done and one_done
+
     def checkWon(self):
         if self.won:
             return
