@@ -230,7 +230,7 @@ class Board:
                 return
         return "invalid direction"
 
-    def printboard(self):
+    def printboard_old(self):
         boardstr = ""
         for r in range(17):
             for c in range(17):
@@ -245,7 +245,41 @@ class Board:
             boardstr += "\n"
         print(boardstr)
 
+    def printboard(self):
+        boardstr = "* 1 2 3 4 5 6 7 8 9\n1 "
+        for r in range(17):
+            for c in range(17):
+                if (r*17 + c) in self.walls:
+                    if (r % 2 == 0):
+                        boardstr += "\033[93m|\033[0m"
+                    elif (c % 2 == 0):
+                        boardstr += "\033[93m-\033[0m"
+                    elif (c % 1 == 0):
+                        boardstr += "\033[93m*\033[0m"
+                elif (r*17 + c) == self.locs[0]:
+                    boardstr += "\033[91m\u25C9\033[0m"
+                elif (r*17 + c) == self.locs[1]:
+                    boardstr += "\033[96m\u25D9\033[0m"
+                else:
+                    if (r % 2 == 0):
+                        if (c % 2 == 1):
+                            boardstr += "|"
+                        else:
+                            boardstr += " "
+                    else:
+                        if (c % 2 == 1):
+                            boardstr += " "
+                        else:
+                            boardstr += "-"
+            boardstr += "\n"
+            if (r % 2 == 1):
+                boardstr += str(r//2 + 2) + " "
+            else:
+                boardstr += "  "
+        print(boardstr)
+        
     def play(self):
+        self.printboard()
         while (True):
             choice = input("Player " + str(self.turn + 1) + "'s turn, move or wall? (type move/wall or m/w)")
             if (choice == "m" or choice == "move"):
@@ -253,8 +287,22 @@ class Board:
                 self.move(choice)
                 self.printboard()
             elif (choice == "w" or choice == "wall"):
-                choice = input("where would you like to place the wall?")
-                choice = int(choice)
+                hv = input("horizontal or vertical (h/v)?")
+                rc = input("which row/column is the first part of the wall at?")
+                rc = int(rc)
+                if (hv == "v"):
+                    rcl = input("which row/column is to the left of wall?")
+                    rcr = input("which row/column is to the right of wall?")
+                    rcr = int(rcr)
+                    rcl = int(rcl)
+                    choice = (rc - 1)*2*17 + (rcr - 1)*2
+                else:
+                    rcd = input("which row/column is below the wall?")
+                    rcu = input("which row/column is above the wall?")
+                    rcd = int(rcd)
+                    rcu = int(rcu)
+                    choice = (((rcu -1)*2) + 1)*17 + (rc - 1)*2
+
                 self.wall(choice)
                 self.printboard()
 
