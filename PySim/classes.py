@@ -280,7 +280,7 @@ class Board:
         
     def play(self):
         self.printboard()
-        while (True):
+        while (True and not self.won):
             choice = input("Player " + str(self.turn + 1) + "'s turn, move or wall? (type move/wall or m/w)")
             if (choice == "m" or choice == "move"):
                 choice = input("w/a/s/d?")
@@ -305,6 +305,8 @@ class Board:
 
                 self.wall(choice)
                 self.printboard()
+    
+
 
 board = Board()
 board.play()
