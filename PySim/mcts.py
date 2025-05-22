@@ -36,5 +36,24 @@ class node:
         return
 
     def generate_children(self):
+        for i in range(17*17):
+            newboard = self.board.copy()
+            if (newboard.wall(i) != -1):
+                child = node(newboard)
+                child.parent = self
+                self.children += child
+        moves = ["w", "a", "s", "d"]
+        ws = ["wa", "wd"]
+        ss = ["sa", "sd"]
+        ehs = ["aw", "as"]
+        ds = ["dw", "ds"]
+        for move in moves:
+            newboard = self.board.copy()
+            if (newboard.move(move) != -1):
+                child = node(newboard)
+                child.parent = self
+                self.children += child
+            ##TODO do upleft upright etc
+
 
             

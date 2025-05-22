@@ -6,6 +6,19 @@ class Board:
         self.turn = 0
         self.won = False
 
+    def __init__(self, locs, num_walls, walls, turn, won):
+        ## Check that set and array copy are deep copies
+        self.locs = [locs[0], locs[1]]
+        self.num_walls = [num_walls[0], num_walls[1]]
+        ##TODO deep copy
+        self.walls = walls
+        ## end todo
+        self.won = won
+
+
+    def copy(self):
+        return Board(self.locs, self.num_walls, self.walls, self.turn, self.won)
+
     def canWin(self):
         visited = set()
         one_done = False
@@ -54,74 +67,89 @@ class Board:
 
     def wall(self, k):
         if self.won:
-            return
+            return -1
         if ((k % 17) > 15) or (k > 17*16):
-            return "wall placement out of bounds"
+            ##print("wall placement out of bounds")
+            return -1
         if (k//17 % 2) and  not ((k % 17) % 2):
             if ((k in self.walls) or ((k + 1) in self.walls) or ((k + 2) in self.walls)):
-                return "wall placement conflict"
+                ##print("wall placement conflict")
+                return -1
             else:
                 self.walls.add(k)
                 self.walls.add(k + 1)
                 self.walls.add(k + 2)
                 self.num_walls[self.turn] -= 1
                 self.turn = (self.turn ^ 1)
+                return 1
         elif ((k % 17) % 2):
             if ((k in self.walls) or ((k + 17) in self.walls) or ((k + 34) in self.walls)):
-                return "wall placement conflict"
+                #print("wall placement conflict")
+                return -1
             else:
                 self.walls.add(k)
                 self.walls.add(k + 17)
                 self.walls.add(k + 34)
                 self.num_walls[self.turn] -= 1
                 self.turn = (self.turn ^ 1)
-        return "uknown error"
+                return 1
+        return "-1"
 
     def move(self, direction):
         if self.won:
             return
         if (direction[0] == "w"):
             if (self.locs[self.turn] - 34 < 0):
-                return "out of bounds"
+                #print("out of bounds")
+                return -1
             elif (self.locs[self.turn] - 17) in self.walls:
-                return "wall in the way"
+                #print("wall in the way")
+                return -1
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] - 34 == self.locs[self.turn^1]):
                 if (self.locs[self.turn] - 68 > 0) and (self.locs[self.turn] - 51) not in self.walls:
                     self.locs[self.turn] -= 68
                     self.checkWon()
                     self.turn = (self.turn ^ 1)
-                    return
+                    return 1
                 elif (len(direction) > 1 and direction[1] == "d"):
                     if (self.locs[self.turn] % 17 > 15):
-                        return "out of bounds"
+                        #print("out of bounds")
+                        return -1
                     elif (self.locs[self.turn] - 33) in self.walls:
-                        return "wall in the way"
+                        #print("wall in the way")
+                        return -1
                     else: 
                         self.locs[self.turn] -= 32
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
                 elif (len(direction) > 1 and direction[1] == "a"):
                     if (self.locs[self.turn] % 17 < 2):
-                        return "out of bounds"
+                        #print("out of bounds")
+                        return -1
                     elif (self.locs[self.turn] - 35) in self.walls:
-                        return "wall in the way"
+                        #print("wall in the way")
+                        return -1
                     else: 
                         self.locs[self.turn] -= 36
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
-                        return
+                        return 1
+                else:
+                    return -1
             ##END CODE FOR HANDLING JUMP RULE
             else: 
                 self.locs[self.turn] -= 34
                 self.checkWon()
                 self.turn = (self.turn ^ 1)
-                return
+                return 1
         if (direction[0] == "s"):
             if (self.locs[self.turn] + 34 >= 17*17):
-                return "out of bounds"
+                #print("out of bounds")
+                return -1
             elif (self.locs[self.turn] + 17) in self.walls:
-                return "wall in the way"
+                #print("wall in the way")
+                return -1
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] + 34 == self.locs[self.turn^1]):
                 if (self.locs[self.turn] + 68 > 0) and (self.locs[self.turn] + 51) not in self.walls:
@@ -131,34 +159,42 @@ class Board:
                     return
                 elif (len(direction) > 1 and direction[1] == "d"):
                     if (self.locs[self.turn] % 17 > 15):
-                        return "out of bounds"
+                        #print("out of bounds")
+                        return -1
                     elif (self.locs[self.turn] + 35) in self.walls:
-                        return "wall in the way"
+                        #print("wall in the way")
+                        return -1
                     else: 
                         self.locs[self.turn] += 36
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
                 elif (len(direction) > 1 and direction[1] == "a"):
                     if (self.locs[self.turn] % 17 < 2):
-                        return "out of bounds"
+                        #print("out of bounds")
+                        return -1
                     elif (self.locs[self.turn] + 33) in self.walls:
-                        return "wall in the way"
+                        #print("wall in the way")
+                        return -1
                     else: 
                         self.locs[self.turn] += 32
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
-                        return
+                        return 1
+                else:
+                    return -1
             ##END CODE FOR HANDLING JUMP RULE
             else: 
                 self.locs[self.turn] += 34
                 self.checkWon()
                 self.turn = (self.turn ^ 1)
-                return
+                return 1
         if (direction[0] == "d"):
             if (self.locs[self.turn] % 17 > 15):
-                return "out of bounds"
+                #print("out of bounds")
+                return -1
             elif (self.locs[self.turn] + 1) in self.walls:
-                return "wall in the way"
+                #print("wall in the way")
+                return -1
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] + 2 == self.locs[self.turn^1]):
                 if (self.locs[self.turn] + 4 > 0) and (self.locs[self.turn] + 3) not in self.walls:
@@ -168,34 +204,42 @@ class Board:
                     return
                 elif (len(direction) > 1 and direction[1] == "w"):
                     if (self.locs[self.turn] - 34 < 0):
-                        return "out of bounds"
+                        #print("out of bounds")
+                        return -1
                     elif (self.locs[self.turn] -33) in self.walls:
-                        return "wall in the way"
+                        #print("wall in the way")
+                        return -1
                     else: 
                         self.locs[self.turn] -= 32
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
                 elif (len(direction) > 1 and direction[1] == "s"):
                     if (self.locs[self.turn] + 34 >= 17*17):
-                        return "out of bounds"
+                        #print("out of bounds")
+                        return -1
                     elif (self.locs[self.turn] + 35) in self.walls:
-                        return "wall in the way"
+                        #print("wall in the way")
+                        return -1
                     else: 
                         self.locs[self.turn] += 36
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
-                        return
+                        return 1
+                else:
+                    return -1
             ##END CODE FOR HANDLING JUMP RULE
             else: 
                 self.locs[self.turn] += 2
                 self.checkWon()
                 self.turn = (self.turn ^ 1)
-                return
+                return 1
         if (direction[0] == "a"):
             if (self.locs[self.turn] % 17 < 2):
-                return "out of bounds"
+                #print("out of bounds")
+                return -1
             elif (self.locs[self.turn] - 1) in self.walls:
-                return "wall in the way"
+                #print("wall in the way")
+                return -1
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] - 2 == self.locs[self.turn^1]):
                 if (self.locs[self.turn] - 4 > 0) and (self.locs[self.turn] - 3) not in self.walls:
@@ -205,30 +249,36 @@ class Board:
                     return
                 elif (len(direction) > 1 and direction[1] == "w"):
                     if (self.locs[self.turn] - 34 < 0):
-                        return "out of bounds"
+                        #print("out of bounds")
+                        return -1
                     elif (self.locs[self.turn] - 35) in self.walls:
-                        return "wall in the way"
+                        #print("wall in the way")
+                        return -1
                     else: 
                         self.locs[self.turn] -= 36
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
                 elif (len(direction) > 1 and direction[1] == "s"):
                     if (self.locs[self.turn] + 34 >= 17*17):
-                        return "out of bounds"
+                        #print("out of bounds")
+                        return -1
                     elif (self.locs[self.turn] + 33) in self.walls:
-                        return "wall in the way"
+                        #print("wall in the way")
+                        return -1
                     else: 
                         self.locs[self.turn] += 32
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
-                        return
+                        return 1
+                else:
+                    return -1
             ##END CODE FOR HANDLING JUMP RULE
             else: 
                 self.locs[self.turn] -= 2
                 self.checkWon()
                 self.turn = (self.turn ^ 1)
-                return
-        return "invalid direction"
+                return 1
+        return -1
 
     def printboard_old(self):
         boardstr = ""
