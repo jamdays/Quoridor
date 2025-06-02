@@ -10,9 +10,7 @@ class Board:
         ## Check that set and array copy are deep copies
         self.locs = [locs[0], locs[1]]
         self.num_walls = [num_walls[0], num_walls[1]]
-        ##TODO deep copy
-        self.walls = walls
-        ## end todo
+        self.walls = set(walls)
         self.won = won
 
 
@@ -61,8 +59,10 @@ class Board:
         if self.won:
             return
         if self.locs[0] >= 16*17:
+            print("red wins!")
             self.won = True
         if self.locs[1] < 17:
+            print("blue wins!")
             self.won = True
 
     def wall(self, k):
