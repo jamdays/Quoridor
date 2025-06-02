@@ -53,7 +53,31 @@ class node:
                 child = node(newboard)
                 child.parent = self
                 self.children += child
-            ##TODO do upleft upright etc
-
-
-            
+            elif move == "w":
+                for w in ws:
+                    new_other_board = self.board.copy()
+                    if (new_other_board.move(w) != -1)
+                        child = node(new_other_board)
+                        child.parent = self
+                        self.children += child
+            elif move == "a":
+                for a in ehs:
+                    new_other_board = self.board.copy()
+                    if (new_other_board.move(a) != -1)
+                        child = node(new_other_board)
+                        child.parent = self
+                        self.children += child
+            elif move == "d":
+                for d in ds:
+                    new_other_board = self.board.copy()
+                    if (new_other_board.move(d) != -1)
+                        child = node(new_other_board)
+                        child.parent = self
+                        self.children += child
+            elif move == "s":
+                for s in ss:
+                    new_other_board = self.board.copy()
+                    if (new_other_board.move(s) != -1)
+                        child = node(new_other_board)
+                        child.parent = self
+                        self.children += child
