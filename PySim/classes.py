@@ -5,13 +5,13 @@ class Board:
         self.walls = set()
         self.turn = 0
         self.won = False
-
-    def __init__(self, locs, num_walls, walls, turn, won):
+    
+##    def __init__(self, locs, num_walls, walls, turn, won):
         ## Check that set and array copy are deep copies
-        self.locs = [locs[0], locs[1]]
-        self.num_walls = [num_walls[0], num_walls[1]]
-        self.walls = set(walls)
-        self.won = won
+  ##      self.locs = [locs[0], locs[1]]
+    ##    self.num_walls = [num_walls[0], num_walls[1]]
+      ##  self.walls = set(walls)
+        ##self.won = won
 
 
     def copy(self):
@@ -296,31 +296,31 @@ class Board:
         print(boardstr)
 
     def printboard(self):
-        boardstr = "* 1 2 3 4 5 6 7 8 9\n1 "
+        boardstr = "*  1     2     3     4     5     6     7     8     9\n1 "
         for r in range(17):
             for c in range(17):
                 if (r*17 + c) in self.walls:
                     if (r % 2 == 0):
-                        boardstr += "\033[93m|\033[0m"
+                        boardstr += "\033[93m \u2016 \033[0m"
                     elif (c % 2 == 0):
-                        boardstr += "\033[93m-\033[0m"
+                        boardstr += "\033[93m===\033[0m"
                     elif (c % 1 == 0):
-                        boardstr += "\033[93m*\033[0m"
+                        boardstr += "\033[93m * \033[0m"
                 elif (r*17 + c) == self.locs[0]:
-                    boardstr += "\033[91m\u25C9\033[0m"
+                    boardstr += "\033[91m \u25C9 \033[0m"
                 elif (r*17 + c) == self.locs[1]:
-                    boardstr += "\033[96m\u25D9\033[0m"
+                    boardstr += "\033[96m \u25D9 \033[0m"
                 else:
                     if (r % 2 == 0):
                         if (c % 2 == 1):
-                            boardstr += "|"
+                            boardstr += " | "
                         else:
-                            boardstr += " "
+                            boardstr += "   "
                     else:
                         if (c % 2 == 1):
-                            boardstr += " "
+                            boardstr += "   "
                         else:
-                            boardstr += "-"
+                            boardstr += "---"
             boardstr += "\n"
             if (r % 2 == 1):
                 boardstr += str(r//2 + 2) + " "
@@ -338,20 +338,19 @@ class Board:
                 self.printboard()
             elif (choice == "w" or choice == "wall"):
                 hv = input("horizontal or vertical (h/v)?")
-                rc = input("which row/column is the first part of the wall at?")
-                rc = int(rc)
                 if (hv == "v"):
-                    rcl = input("which row/column is to the left of wall?")
-                    rcr = input("which row/column is to the right of wall?")
-                    rcr = int(rcr)
-                    rcl = int(rcl)
-                    choice = (rc - 1)*2*17 + (rcr - 1)*2
+                    r = input("which row is the top part of the wall at?")
+                    r = int(r)
+                    cr = input("which column is to the right of wall?")
+                    cr = int(cr)
+                    choice = (r - 1)*2*17 + (cr - 1)*2 - 1
+                    print(choice)
                 else:
-                    rcd = input("which row/column is below the wall?")
-                    rcu = input("which row/column is above the wall?")
-                    rcd = int(rcd)
-                    rcu = int(rcu)
-                    choice = (((rcu -1)*2) + 1)*17 + (rc - 1)*2
+                    c = input("which column is the left part of the wall at?")
+                    c = int(c)
+                    ra = input("which row is above the wall?")
+                    ra = int(ra)
+                    choice = (((ra -1)*2) + 1)*17 + (c - 1)*2
 
                 self.wall(choice)
                 self.printboard()
