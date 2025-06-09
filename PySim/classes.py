@@ -11,7 +11,7 @@ class Board:
     def copy(self):
         return Board(self.locs, self.num_walls, self.walls, self.turn, self.won)
     
-    def path_lengths(self):
+    def path_lens(self):
         visited = set()
         queue = []
         idx = 0
@@ -37,7 +37,7 @@ class Board:
         two_path_length = float('inf')
         queue.append((self.locs[1], 0))
         while queue:
-            if queue[idx][0] >= 16*17:
+            if queue[idx][0] < 17:
                 one_path_length = queue[idx][1]
                 break
             visited.add(queue[idx][0])
@@ -51,6 +51,30 @@ class Board:
                 queue.append((curr + 2, queue[idx][1]+1))
             idx += 1
         return (one_path_length, two_path_length)
+                
+    def get_shortest_path(self):
+        visited = set()
+        queue = []
+        idx = 0
+        one_path_length = float('inf')
+        queue.append((self.locs[turn], 0, None))
+        goal = lambda x: x >= 16*17
+        if turn == 1:
+            goal = lambda x: x < 17
+        while queue:
+            if goal(queue[idx][0]):
+                one_path_length = queue[idx][1]
+                break
+            visited.add(queue[idx][0])
+            if curr > 17 and curr - 17 not in self.walls:
+                queue.append((curr - 34, queue[idx][1]+1))
+            if curr < 17*16 and curr + 17 not in self.walls:
+                queue.append((curr + 34, queue[idx][1]+1))
+            if curr % 17 > 1 and curr - 1 not in self.walls:
+                queue.append((curr - 2, queue[idx][1]+1))
+            if curr % 17 < 16 and curr + 1 not in self.walls:
+                queue.append((curr + 2, queue[idx][1]+1))
+            idx += 1
 
     def canWin(self):
         visited = set()
