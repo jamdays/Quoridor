@@ -46,7 +46,7 @@ class node:
         ##TODO THINK OF A FUNCTION OF TWO VARIABLES THAT IS more positive WHEN x is smaller than y
         ## AND more negative WHEN x is greater than y. AND the further the distance, the greater the
         ## value
-        return lens[0] - lens[1] + .25(sim.walls[0] - sim.walls[1])
+        return lens[1] - lens[0] + .25(sim.walls[1] - sim.walls[0])
 
     ##TODO tune probablilties
     def full_rollout(self): sim = self.board.copy()

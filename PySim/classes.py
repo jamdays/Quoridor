@@ -52,7 +52,7 @@ class Board:
             idx += 1
         return (one_path_length, two_path_length)
                 
-    def get_shortest_path(self):
+    def get_shortest_path_move(self):
         visited = set()
         queue = []
         idx = 0
@@ -66,15 +66,22 @@ class Board:
                 one_path_length = queue[idx][1]
                 break
             visited.add(queue[idx][0])
+            ## TODO can fix this to be pointers instead cus this is wasteful
             if curr > 17 and curr - 17 not in self.walls:
-                queue.append((curr - 34, queue[idx][1]+1))
+                queue.append((curr - 34, queue[idx][1]+1, queue[idx]))
             if curr < 17*16 and curr + 17 not in self.walls:
-                queue.append((curr + 34, queue[idx][1]+1))
+                queue.append((curr + 34, queue[idx][1]+1, queue[idx]))
             if curr % 17 > 1 and curr - 1 not in self.walls:
-                queue.append((curr - 2, queue[idx][1]+1))
+                queue.append((curr - 2, queue[idx][1]+1. queue[idx]))
             if curr % 17 < 16 and curr + 1 not in self.walls:
-                queue.append((curr + 2, queue[idx][1]+1))
+                queue.append((curr + 2, queue[idx][1]+1, queue[idx]))
             idx += 1
+        part = queue[idx]
+        while part[2] is not None:
+            if part[2][2] == None:
+                return part[0]
+            part = part[2]
+        return part[0]
 
     def canWin(self):
         visited = set()
@@ -153,6 +160,14 @@ class Board:
                 self.turn = (self.turn ^ 1)
                 return 1
         return "-1"
+
+    def move_num(self, num):
+        if self.won:
+            return
+        self.locs[self.turn] = num
+        self.checkWon()
+        self.turn = self.turn ^ 1
+
 
     def move(self, direction):
         if self.won:
