@@ -8,11 +8,18 @@ class node:
         self.w = 0
         self.n = 0
         self.children = []
+    
+    def run(self):
+        if self.n == 0:
+            self.backprop(partial_rollout(200))
+        else:
+            run(self.best_child())
+
 
     def uct(self, c, total):
         return (self.w)/((self.n) + 1) + c*((math.log(total)/self.n)**.5)
 
-    def max_moves_rollout(self, depth):
+    def partial_rollout(self, depth):
         sim = self.board.copy()
         c = 0;
 
@@ -41,8 +48,8 @@ class node:
         ## value
         return lens[0] - lens[1] + .25(sim.walls[0] - sim.walls[1])
 
-    def full_rollout(self):
-        sim = self.board.copy()
+    ##TODO tune probablilties
+    def full_rollout(self): sim = self.board.copy()
         moves = ["wa", "wd", "aw", "as", "sa", "sd", "dw", "ds"]
         while !sim.won:
             if (random.random() > .7 || sim.walls[sim.turn] == 0):
@@ -56,6 +63,8 @@ class node:
                     tries -= 1
         return sim.turn
 
+
+    ##TODO tune probablilties
     def full_biased_rollout(self):
         sim = self.board.copy()
         moves = ["wa", "wd", "aw", "as", "sa", "sd", "dw", "ds"]
@@ -141,6 +150,6 @@ class node:
                         child.parent = self
                         self.children += child
 
-def run(rollout, inital):
+
 
 
