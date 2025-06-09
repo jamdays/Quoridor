@@ -1,21 +1,56 @@
 class Board:
-    def __init__(self):
-        self.locs = [0*17 + 8, 16*17 + 8]
-        self.num_walls = [10, 10]
-        self.walls = set()
-        self.turn = 0
-        self.won = False
-    
-##    def __init__(self, locs, num_walls, walls, turn, won):
-        ## Check that set and array copy are deep copies
-  ##      self.locs = [locs[0], locs[1]]
-    ##    self.num_walls = [num_walls[0], num_walls[1]]
-      ##  self.walls = set(walls)
-        ##self.won = won
+    def __init__(self, locs=[0*17 + 8, 16*17 + 8], num_walls=[10,10], walls=set(), turn=0, won=False):
+        ##Check that set and array copy are deep copies
+        self.locs = [locs[0], locs[1]]
+        self.num_walls = [num_walls[0], num_walls[1]]
+        self.walls = set(walls)
+        self.won = won
+        self.turn = turn
 
 
     def copy(self):
         return Board(self.locs, self.num_walls, self.walls, self.turn, self.won)
+    
+    def path_lengths(self):
+        visited = set()
+        queue = []
+        idx = 0
+        one_path_length = float('inf')
+        queue.append((self.locs[0], 0))
+        while queue:
+            if queue[idx][0] >= 16*17:
+                one_path_length = queue[idx][1]
+                break
+            visited.add(queue[idx][0])
+            if curr > 17 and curr - 17 not in self.walls:
+                queue.append((curr - 34, queue[idx][1]+1))
+            if curr < 17*16 and curr + 17 not in self.walls:
+                queue.append((curr + 34, queue[idx][1]+1))
+            if curr % 17 > 1 and curr - 1 not in self.walls:
+                queue.append((curr - 2, queue[idx][1]+1))
+            if curr % 17 < 16 and curr + 1 not in self.walls:
+                queue.append((curr + 2, queue[idx][1]+1))
+            idx += 1
+        visited = set()
+        queue = []
+        idx = 0
+        two_path_length = float('inf')
+        queue.append((self.locs[1], 0))
+        while queue:
+            if queue[idx][0] >= 16*17:
+                one_path_length = queue[idx][1]
+                break
+            visited.add(queue[idx][0])
+            if curr > 17 and curr - 17 not in self.walls:
+                queue.append((curr - 34, queue[idx][1]+1))
+            if curr < 17*16 and curr + 17 not in self.walls:
+                queue.append((curr + 34, queue[idx][1]+1))
+            if curr % 17 > 1 and curr - 1 not in self.walls:
+                queue.append((curr - 2, queue[idx][1]+1))
+            if curr % 17 < 16 and curr + 1 not in self.walls:
+                queue.append((curr + 2, queue[idx][1]+1))
+            idx += 1
+        return (one_path_length, two_path_length)
 
     def canWin(self):
         visited = set()
@@ -331,7 +366,8 @@ class Board:
     def play(self):
         self.printboard()
         while (True and not self.won):
-            choice = input("Player " + str(self.turn + 1) + "'s turn, move or wall? (type move/wall or m/w)")
+            players =["Red", "Blue"]
+            choice = input(players[self.turn] + "'s turn, move or wall? (type move/wall or m/w)")
             if (choice == "m" or choice == "move"):
                 choice = input("w/a/s/d?")
                 self.move(choice)

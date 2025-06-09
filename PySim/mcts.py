@@ -11,7 +11,7 @@ class node:
     def uct(self, c, total):
         return (self.w)/((self.n) + 1) + c*((math.log(total)/self.n)**.5)
 
-    def rollout(self):
+    def rollout(self, depth):
         ##TODO
         won = 0
         return won
@@ -81,3 +81,7 @@ class node:
                         child = node(new_other_board)
                         child.parent = self
                         self.children += child
+
+def run(rollout, inital):
+
+
