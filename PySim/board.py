@@ -12,6 +12,8 @@ class Board:
         return Board(self.locs, self.num_walls, self.walls, self.turn, self.won)
     
     def path_lens(self):
+        self.printboard()
+        print("started_looking")
         visited = set()
         queue = []
         idx = 0
@@ -22,13 +24,14 @@ class Board:
                 one_path_length = queue[idx][1]
                 break
             visited.add(queue[idx][0])
-            if curr > 17 and curr - 17 not in self.walls:
+            curr = queue[idx][0]
+            if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
                 queue.append((curr - 34, queue[idx][1]+1))
-            if curr < 17*16 and curr + 17 not in self.walls:
+            if curr < 17*16 and curr + 17 not in self.walls and curr + 34 not in visited:
                 queue.append((curr + 34, queue[idx][1]+1))
-            if curr % 17 > 1 and curr - 1 not in self.walls:
+            if curr % 17 > 1 and curr - 1 not in self.walls and curr - 2 not in visited:
                 queue.append((curr - 2, queue[idx][1]+1))
-            if curr % 17 < 16 and curr + 1 not in self.walls:
+            if curr % 17 < 16 and curr + 1 not in self.walls and curr + 2 not in visited:
                 queue.append((curr + 2, queue[idx][1]+1))
             idx += 1
         visited = set()
@@ -41,13 +44,14 @@ class Board:
                 one_path_length = queue[idx][1]
                 break
             visited.add(queue[idx][0])
-            if curr > 17 and curr - 17 not in self.walls:
+            curr = queue[idx][0]
+            if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
                 queue.append((curr - 34, queue[idx][1]+1))
-            if curr < 17*16 and curr + 17 not in self.walls:
+            if curr < 17*16 and curr + 17 not in self.walls and curr + 34 not in visited:
                 queue.append((curr + 34, queue[idx][1]+1))
-            if curr % 17 > 1 and curr - 1 not in self.walls:
+            if curr % 17 > 1 and curr - 1 not in self.walls and curr - 2 not in visited:
                 queue.append((curr - 2, queue[idx][1]+1))
-            if curr % 17 < 16 and curr + 1 not in self.walls:
+            if curr % 17 < 16 and curr + 1 not in self.walls and curr + 2 not in visited:
                 queue.append((curr + 2, queue[idx][1]+1))
             idx += 1
         return (one_path_length, two_path_length)
@@ -66,14 +70,15 @@ class Board:
                 one_path_length = queue[idx][1]
                 break
             visited.add(queue[idx][0])
+            curr = queue[idx][0]
             ## TODO can fix this to be pointers instead cus this is wasteful
-            if curr > 17 and curr - 17 not in self.walls:
+            if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
                 queue.append((curr - 34, queue[idx][1]+1, queue[idx]))
-            if curr < 17*16 and curr + 17 not in self.walls:
+            if curr < 17*16 and curr + 17 not in self.walls and curr + 34 not in visited:
                 queue.append((curr + 34, queue[idx][1]+1, queue[idx]))
-            if curr % 17 > 1 and curr - 1 not in self.walls:
+            if curr % 17 > 1 and curr - 1 not in self.walls and curr - 2 not in visited:
                 queue.append((curr - 2, queue[idx][1]+1, queue[idx]))
-            if curr % 17 < 16 and curr + 1 not in self.walls:
+            if curr % 17 < 16 and curr + 1 not in self.walls and curr + 2 not in visited:
                 queue.append((curr + 2, queue[idx][1]+1, queue[idx]))
             idx += 1
         part = queue[idx]
@@ -88,36 +93,39 @@ class Board:
         one_done = False
         stack = []
         stack.append(self.locs[0])
-        while not (one_done or len(stack) == 0):
+        while (not one_done) and len(stack) != 0:
             curr = stack.pop()
             if curr >= 16*17:
-                two_done = True
+                one_done = True
+                break
             visited.add(curr)
-            if curr > 17 and curr - 17 not in self.walls:
+            if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
                 stack.append(curr - 34)
-            if curr < 17*16 and curr + 17 not in self.walls:
+            if curr < 17*16 and curr + 17 not in self.walls and curr + 34 not in visited:
                 stack.append(curr + 34)
-            if curr % 17 > 1 and curr - 1 not in self.walls:
+            if curr % 17 > 1 and curr - 1 not in self.walls and curr - 2 not in visited:
                 stack.append(curr - 2)
-            if curr % 17 < 16 and curr + 1 not in self.walls:
+            if curr % 17 < 16 and curr + 1 not in self.walls and curr + 2 not in visited:
                 stack.append(curr + 2)
         
         visited = set()
         two_done = False
         stack = []
         stack.append(self.locs[1])
-        while not (two_done or len(stack) == 0):
+        while (not two_done) and len(stack) != 0:
+            print(stack)
             curr = stack.pop()
             if curr < 17:
                 two_done = True
+                break
             visited.add(curr)
-            if curr > 17 and curr - 17 not in self.walls:
+            if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
                 stack.append(curr - 34)
-            if curr < 17*16 and curr + 17 not in self.walls:
+            if curr < 17*16 and curr + 17 not in self.walls and curr + 34 not in visited:
                 stack.append(curr + 34)
-            if curr % 17 > 1 and curr - 1 not in self.walls:
+            if curr % 17 > 1 and curr - 1 not in self.walls and curr - 2 not in visited:
                 stack.append(curr - 2)
-            if curr % 17 < 16 and curr + 1 not in self.walls:
+            if curr % 17 < 16 and curr + 1 not in self.walls and curr + 2 not in visited:
                 stack.append(curr + 2)
         return two_done and one_done
 
@@ -145,6 +153,11 @@ class Board:
                 self.walls.add(k)
                 self.walls.add(k + 1)
                 self.walls.add(k + 2)
+                if not self.canWin():
+                    self.walls.remove(k)
+                    self.walls.remove(k + 1)
+                    self.walls.remove(k + 2)
+                    return -1
                 self.num_walls[self.turn] -= 1
                 self.turn = (self.turn ^ 1)
                 return 1
@@ -156,6 +169,11 @@ class Board:
                 self.walls.add(k)
                 self.walls.add(k + 17)
                 self.walls.add(k + 34)
+                if not self.canWin():
+                    self.walls.remove(k)
+                    self.walls.remove(k + 17)
+                    self.walls.remove(k + 34)
+                    return -1
                 self.num_walls[self.turn] -= 1
                 self.turn = (self.turn ^ 1)
                 return 1
@@ -404,9 +422,9 @@ class Board:
         
     def play(self):
         self.printboard()
-        while (True and not self.won):
+        while (not self.won):
             self.prompt()
-
+    
     def prompt(self):
         players =["Red", "Blue"]
         choice = input(players[self.turn] + "'s turn, move or wall? (type move/wall or m/w)")
@@ -432,8 +450,8 @@ class Board:
 
             self.wall(choice)
             self.printboard()
-    
 
 
-board = Board()
-board.play()
+if __name__ == "__main__":
+    board = Board()
+    board.play()

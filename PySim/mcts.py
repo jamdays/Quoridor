@@ -1,7 +1,8 @@
 import math
 import random
+from board import Board
 
-class node:
+class Node:
     def __init__(self, board):
         self.parent = None
         self.board = board
@@ -11,13 +12,18 @@ class node:
     
     def run(self):
         if self.n == 0:
-            self.backprop(partial_rollout(200))
+            print("one backprop start")
+            self.backprop(self.partial_rollout(50))
+            print("one backprop")
+        elif len(self.children) == 0:
+            self.generate_children()
+            self.best_child(1.4).run()
         else:
-            run(self.best_child())
+            self.best_child(1.4).run()
 
 
     def uct(self, c, total):
-        return (self.w)/((self.n) + 1) + c*((math.log(total)/self.n)**.5)
+        return (self.w)/((self.n) + 1) + c*((math.log(total)/(self.n + 1))**.5)
 
     def partial_rollout(self, depth):
         sim = self.board.copy()
@@ -27,7 +33,7 @@ class node:
         while c < depth:
             if sim.won:
                 break
-            if (random.random() > .7 || sim.walls[sim.turn] == 0):
+            if (random.random() < .7 or sim.num_walls[sim.turn] == 0):
                 if (sim.move(moves[random.randint(0,7)]) !=-1):
                     c += 1
             else:
@@ -46,13 +52,14 @@ class node:
         ##TODO THINK OF A FUNCTION OF TWO VARIABLES THAT IS more positive WHEN x is smaller than y
         ## AND more negative WHEN x is greater than y. AND the further the distance, the greater the
         ## value
-        return lens[1] - lens[0] + .25(sim.walls[1] - sim.walls[0])
+        return lens[0] - lens[1] + .25*(sim.num_walls[0] - sim.num_walls[1])
 
     ##TODO tune probablilties
-    def full_rollout(self): sim = self.board.copy()
+    def full_rollout(self): 
+        sim = self.board.copy()
         moves = ["wa", "wd", "aw", "as", "sa", "sd", "dw", "ds"]
-        while !sim.won:
-            if (random.random() > .7 || sim.walls[sim.turn] == 0):
+        while not sim.won:
+            if (random.random() < .7 or sim.num_walls[sim.turn] == 0):
                 sim.move(moves[random.randint(0,7)])
             else:
                 tries = 20
@@ -68,8 +75,8 @@ class node:
     def full_biased_rollout(self):
         sim = self.board.copy()
         moves = ["wa", "wd", "aw", "as", "sa", "sd", "dw", "ds"]
-        while !sim.won:
-            if (random.random() > .7 || sim.walls[sim.turn] == 0):
+        while not sim.won:
+            if (random.random() < .7 or sim.num_walls[sim.turn] == 0):
                 if (random.random() > .6):
                     sim.move_num(sim.get_shortest_path_move())
                 else:
@@ -84,21 +91,21 @@ class node:
         return sim.turn
 
 
-    def best_child(self, c, total):
+    def best_child(self, c):
         max_uct = -1
-        best_child = None
+        best_child = self.children[0]
         for child in self.children:
-            if child.uct(c, total) > max_uct:
+            if child.uct(c, self.n) > max_uct:
                 best_child = child
-                max_uct = child.uct(c, total)
+                max_uct = child.uct(c, self.n)
         return best_child
 
     def backprop(self, won):
-        self.v += won
+        self.w += won
         self.n += 1
         node = self.parent
         while (node is not None):
-            node.v += won
+            node.w += won
             node.n += 1
             node = node.parent
         return
@@ -107,9 +114,9 @@ class node:
         for i in range(17*17):
             newboard = self.board.copy()
             if (newboard.wall(i) != -1):
-                child = node(newboard.copy())
+                child = Node(newboard.copy())
                 child.parent = self
-                self.children += child
+                self.children.append(child)
         moves = ["w", "a", "s", "d"]
         ws = ["wa", "wd"]
         ss = ["sa", "sd"]
@@ -118,37 +125,37 @@ class node:
         for move in moves:
             newboard = self.board.copy()
             if (newboard.move(move) != -1):
-                child = node(newboard.copy())
+                child = Node(newboard.copy())
                 child.parent = self
-                self.children += child
+                self.children.append(child)
             elif move == "w":
                 for w in ws:
                     new_other_board = self.board.copy()
-                    if (new_other_board.move(w) != -1)
-                        child = node(new_other_board.copy())
+                    if (new_other_board.move(w) != -1):
+                        child = Node(new_other_board.copy())
                         child.parent = self
-                        self.children += child
+                        self.children.append(child)
             elif move == "a":
                 for a in ehs:
                     new_other_board = self.board.copy()
-                    if (new_other_board.move(a) != -1)
-                        child = node(new_other_board.copy())
+                    if (new_other_board.move(a) != -1):
+                        child = Node(new_other_board.copy())
                         child.parent = self
-                        self.children += child
+                        self.children.append(child)
             elif move == "d":
                 for d in ds:
                     new_other_board = self.board.copy()
-                    if (new_other_board.move(d) != -1)
-                        child = node(new_other_board.copy())
+                    if (new_other_board.move(d) != -1):
+                        child = Node(new_other_board.copy())
                         child.parent = self
-                        self.children += child
+                        self.children.append(child)
             elif move == "s":
                 for s in ss:
                     new_other_board = self.board.copy()
-                    if (new_other_board.move(s) != -1)
-                        child = node(new_other_board.copy())
+                    if (new_other_board.move(s) != -1):
+                        child = Node(new_other_board.copy())
                         child.parent = self
-                        self.children += child
+                        self.children.append(child)
 
 
 
