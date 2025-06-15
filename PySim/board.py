@@ -6,6 +6,7 @@ class Board:
         self.walls = set(walls)
         self.won = won
         self.turn = turn
+        self.plays = []
 
 
     def copy(self):
@@ -18,9 +19,15 @@ class Board:
         one_path_length = float('inf')
         queue.append((self.locs[0], 0))
         while queue:
-            if queue[idx][0] >= 16*17:
-                one_path_length = queue[idx][1]
-                break
+            try:
+                if queue[idx][0] >= 16*17:
+                    one_path_length = queue[idx][1]
+                    break
+            except:
+                print(len(queue))
+                print(idx)
+                self.printboard()
+                print(self.plays)
             visited.add(queue[idx][0])
             curr = queue[idx][0]
             if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
@@ -38,9 +45,14 @@ class Board:
         two_path_length = float('inf')
         queue.append((self.locs[1], 0))
         while queue:
-            if queue[idx][0] < 17:
-                two_path_length = queue[idx][1]
-                break
+            try:
+                if queue[idx][0] < 17:
+                    two_path_length = queue[idx][1]
+                    break
+            except:
+                print(len(queue))
+                print(idx)
+                self.printboard()
             visited.add(queue[idx][0])
             curr = queue[idx][0]
             if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
@@ -150,6 +162,7 @@ class Board:
                 self.walls.add(k)
                 self.walls.add(k + 1)
                 self.walls.add(k + 2)
+                self.plays.append(self.canWin())
                 if not self.canWin():
                     self.walls.remove(k)
                     self.walls.remove(k + 1)
@@ -166,6 +179,7 @@ class Board:
                 self.walls.add(k)
                 self.walls.add(k + 17)
                 self.walls.add(k + 34)
+                self.plays.append(self.canWin())
                 if not self.canWin():
                     self.walls.remove(k)
                     self.walls.remove(k + 17)
