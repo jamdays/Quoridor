@@ -12,8 +12,6 @@ class Board:
         return Board(self.locs, self.num_walls, self.walls, self.turn, self.won)
     
     def path_lens(self):
-        self.printboard()
-        print("started_looking")
         visited = set()
         queue = []
         idx = 0
@@ -41,7 +39,7 @@ class Board:
         queue.append((self.locs[1], 0))
         while queue:
             if queue[idx][0] < 17:
-                one_path_length = queue[idx][1]
+                two_path_length = queue[idx][1]
                 break
             visited.add(queue[idx][0])
             curr = queue[idx][0]
@@ -113,7 +111,6 @@ class Board:
         stack = []
         stack.append(self.locs[1])
         while (not two_done) and len(stack) != 0:
-            print(stack)
             curr = stack.pop()
             if curr < 17:
                 two_done = True
@@ -133,10 +130,10 @@ class Board:
         if self.won:
             return
         if self.locs[0] >= 16*17:
-            print("red wins!")
+            #print("red wins!")
             self.won = True
         if self.locs[1] < 17:
-            print("blue wins!")
+            #print("blue wins!")
             self.won = True
 
     def wall(self, k):

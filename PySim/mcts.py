@@ -12,18 +12,19 @@ class Node:
     
     def run(self):
         if self.n == 0:
-            print("one backprop start")
-            self.backprop(self.partial_rollout(50))
-            print("one backprop")
-        elif len(self.children) == 0:
+            self.backprop(self.partial_rollout(100))
+        elif len(self.children) == 0: 
             self.generate_children()
-            self.best_child(1.4).run()
+            self.children[random.randint(0, len(self.children) -1)].run()
         else:
             self.best_child(1.4).run()
 
 
     def uct(self, c, total):
-        return (self.w)/((self.n) + 1) + c*((math.log(total)/(self.n + 1))**.5)
+        if self.board.turn == 0:
+            return (self.w)/((self.n) + 1) + c*((math.log(total)/(self.n + 1))**.5)
+        else:
+            return -1*(self.w)/((self.n) + 1) + c*((math.log(total)/(self.n + 1))**.5)
 
     def partial_rollout(self, depth):
         sim = self.board.copy()
@@ -52,7 +53,7 @@ class Node:
         ##TODO THINK OF A FUNCTION OF TWO VARIABLES THAT IS more positive WHEN x is smaller than y
         ## AND more negative WHEN x is greater than y. AND the further the distance, the greater the
         ## value
-        return lens[0] - lens[1] + .25*(sim.num_walls[0] - sim.num_walls[1])
+        return lens[1] - lens[0] + .25*(sim.num_walls[1] - sim.num_walls[0])
 
     ##TODO tune probablilties
     def full_rollout(self): 
@@ -104,7 +105,7 @@ class Node:
         self.w += won
         self.n += 1
         node = self.parent
-        while (node is not None):
+        while node is not None:
             node.w += won
             node.n += 1
             node = node.parent

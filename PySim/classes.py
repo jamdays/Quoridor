@@ -17,9 +17,16 @@ class Board:
         idx = 0
         one_path_length = float('inf')
         queue.append((self.locs[0], 0))
-        while queue:
-            if queue[idx][0] >= 16*17:
-                one_path_length = queue[idx][1]
+        while idx < len(queue):
+            try:
+                if queue[idx][0] >= 16*17:
+                    one_path_length = queue[idx][1]
+                    break
+            except:
+                print(idx)
+                print(len(queue))
+                self.printboard()
+                print(queue[idx])
                 break
             visited.add(queue[idx][0])
             if curr > 17 and curr - 17 not in self.walls:
@@ -31,14 +38,23 @@ class Board:
             if curr % 17 < 16 and curr + 1 not in self.walls:
                 queue.append((curr + 2, queue[idx][1]+1))
             idx += 1
+        if idx >= len(queue):
+            self.printboard()
         visited = set()
         queue = []
         idx = 0
         two_path_length = float('inf')
         queue.append((self.locs[1], 0))
-        while queue:
-            if queue[idx][0] < 17:
-                one_path_length = queue[idx][1]
+        while idx < len(queue):
+            try:
+                if queue[idx][0] < 17:
+                    one_path_length = queue[idx][1]
+                    break
+            except:
+                print(idx)
+                print(len(queue))
+                self.printboard()
+                print(queue[idx])
                 break
             visited.add(queue[idx][0])
             if curr > 17 and curr - 17 not in self.walls:
@@ -50,6 +66,8 @@ class Board:
             if curr % 17 < 16 and curr + 1 not in self.walls:
                 queue.append((curr + 2, queue[idx][1]+1))
             idx += 1
+        if idx >= len(queue):
+            self.printboard()
         return (one_path_length, two_path_length)
                 
     def get_shortest_path_move(self):
