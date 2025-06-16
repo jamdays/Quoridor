@@ -11,13 +11,14 @@ class Node:
         self.children = []
     
     def run(self):
-        if self.n == 0:
-            self.backprop(self.partial_rollout(100))
-        elif len(self.children) == 0: 
-            self.generate_children()
-            self.children[random.randint(0, len(self.children) -1)].run()
-        else:
-            self.best_child(1.4).run()
+        node = self
+        while node.n != 0:
+            if len(node.children) == 0: 
+                node.generate_children()
+                node = node.children[random.randint(0, len(node.children) -1)]
+            else:
+                node = node.best_child(1.4)
+        node.backprop(node.full_biased_rollout())
 
 
     def uct(self, c, total):
@@ -36,20 +37,22 @@ class Node:
                 break
             if (random.random() < .7 or sim.num_walls[sim.turn] == 0):
                 if (sim.move(moves[random.randint(0,7)]) !=-1):
+                    sim.playstack.append(sim.to_str())
                     c += 1
             else:
                 tries = 20
                 while tries > 0:
                     if (sim.wall(random.randint(0, 17*17 -1)) != -1):
+                        sim.playstack.append(sim.to_str())
                         c += 1
                         break
                     tries -= 1
         lens = sim.path_lens()
         if lens[0] == 0 or (lens[0] == 1 and sim.turn == 0):
             ##TODO THINK OF A GOOD VALUE HERE
-            return 100
+            return 10000
         elif lens[0] == 0 or (lens[0] == 1 and sim.turn == 0):        
-            return -100
+            return -10000
         ##TODO THINK OF A FUNCTION OF TWO VARIABLES THAT IS more positive WHEN x is smaller than y
         ## AND more negative WHEN x is greater than y. AND the further the distance, the greater the
         ## value
@@ -86,10 +89,10 @@ class Node:
                 tries = 20
                 while tries > 0:
                     if (sim.wall(random.randint(0, 17*17 -1)) != -1):
-                        c += 1
                         break
                     tries -= 1
-        return sim.turn
+        #so that it returns -1 if p2 wins and 1 if p1 wins
+        return ((sim.turn*-2) + 1)
 
 
     def best_child(self, c):
@@ -118,6 +121,8 @@ class Node:
                 child = Node(newboard.copy())
                 child.parent = self
                 self.children.append(child)
+                if self.board == child.board:
+                    print("LINE 125 board")
         moves = ["w", "a", "s", "d"]
         ws = ["wa", "wd"]
         ss = ["sa", "sd"]
@@ -125,38 +130,48 @@ class Node:
         ds = ["dw", "ds"]
         for move in moves:
             newboard = self.board.copy()
-            if (newboard.move(move) != -1):
+            if (newboard.move(move) == 1):
                 child = Node(newboard.copy())
                 child.parent = self
                 self.children.append(child)
+                if self.board == child.board:
+                    print("LINE 138 board")
             elif move == "w":
                 for w in ws:
                     new_other_board = self.board.copy()
-                    if (new_other_board.move(w) != -1):
+                    if (new_other_board.move(w) == 1):
                         child = Node(new_other_board.copy())
                         child.parent = self
                         self.children.append(child)
+                        if self.board == child.board:
+                            print("LINE 147 board")
             elif move == "a":
                 for a in ehs:
                     new_other_board = self.board.copy()
-                    if (new_other_board.move(a) != -1):
+                    if (new_other_board.move(a) == 1):
                         child = Node(new_other_board.copy())
                         child.parent = self
                         self.children.append(child)
+                        if self.board == child.board:
+                            print("LINE 156 board")
             elif move == "d":
                 for d in ds:
                     new_other_board = self.board.copy()
-                    if (new_other_board.move(d) != -1):
+                    if (new_other_board.move(d) == 1):
                         child = Node(new_other_board.copy())
                         child.parent = self
                         self.children.append(child)
+                        if self.board == child.board:
+                            print("LINE 165 board")
             elif move == "s":
                 for s in ss:
                     new_other_board = self.board.copy()
-                    if (new_other_board.move(s) != -1):
+                    if (new_other_board.move(s) == 1):
                         child = Node(new_other_board.copy())
                         child.parent = self
                         self.children.append(child)
+                        if self.board == child.board:
+                            print("LINE 174 board")
 
 
 

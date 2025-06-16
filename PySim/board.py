@@ -7,7 +7,11 @@ class Board:
         self.won = won
         self.turn = turn
         self.plays = []
+        self.playstack = []
 
+    def __eq__(self, other):
+        return self.locs[0] == other.locs[0] and self.locs[0] == other.locs[0] and \
+                self.walls == other.walls and self.turn == other.turn
 
     def copy(self):
         return Board(self.locs, self.num_walls, self.walls, self.turn, self.won)
@@ -28,6 +32,12 @@ class Board:
                 print(idx)
                 self.printboard()
                 print(self.plays)
+                print(self.locs)
+                print(self.walls)
+                print(self.num_walls)
+                print(self.turn)
+                for i in range(len(self.playstack)):
+                    print(self.playstack[i])
             visited.add(queue[idx][0])
             curr = queue[idx][0]
             if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
@@ -53,6 +63,13 @@ class Board:
                 print(len(queue))
                 print(idx)
                 self.printboard()
+                print(self.plays)
+                print(self.locs)
+                print(self.walls)
+                print(self.num_walls)
+                print(self.turn)
+                for i in range(len(self.playstack)):
+                    print(self.playstack[i])
             visited.add(queue[idx][0])
             curr = queue[idx][0]
             if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
@@ -71,9 +88,9 @@ class Board:
         queue = []
         idx = 0
         one_path_length = float('inf')
-        queue.append((self.locs[turn], 0, None))
+        queue.append((self.locs[self.turn], 0, None))
         goal = lambda x: x >= 16*17
-        if turn == 1:
+        if self.turn == 1:
             goal = lambda x: x < 17
         while queue:
             if goal(queue[idx][0]):
@@ -151,6 +168,8 @@ class Board:
     def wall(self, k):
         if self.won:
             return -1
+        if self.num_walls[self.turn] < 1:
+            return -1
         if ((k % 17) > 15) or (k > 17*16):
             ##print("wall placement out of bounds")
             return -1
@@ -164,6 +183,7 @@ class Board:
                 self.walls.add(k + 2)
                 self.plays.append(self.canWin())
                 if not self.canWin():
+                    self.plays.pop()
                     self.walls.remove(k)
                     self.walls.remove(k + 1)
                     self.walls.remove(k + 2)
@@ -171,7 +191,7 @@ class Board:
                 self.num_walls[self.turn] -= 1
                 self.turn = (self.turn ^ 1)
                 return 1
-        elif ((k % 17) % 2):
+        elif ((k % 17) % 2) and not (k//17 % 2):
             if ((k in self.walls) or ((k + 17) in self.walls) or ((k + 34) in self.walls)):
                 #print("wall placement conflict")
                 return -1
@@ -181,6 +201,7 @@ class Board:
                 self.walls.add(k + 34)
                 self.plays.append(self.canWin())
                 if not self.canWin():
+                    self.plays.pop()
                     self.walls.remove(k)
                     self.walls.remove(k + 17)
                     self.walls.remove(k + 34)
@@ -188,7 +209,7 @@ class Board:
                 self.num_walls[self.turn] -= 1
                 self.turn = (self.turn ^ 1)
                 return 1
-        return "-1"
+        return -1
 
     def move_num(self, num):
         if self.won:
@@ -255,11 +276,11 @@ class Board:
                 return -1
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] + 34 == self.locs[self.turn^1]):
-                if (self.locs[self.turn] + 68 > 0) and (self.locs[self.turn] + 51) not in self.walls:
+                if (self.locs[self.turn] + 68 < 17*17) and (self.locs[self.turn] + 51) not in self.walls:
                     self.locs[self.turn] += 68
                     self.checkWon()
                     self.turn = (self.turn ^ 1)
-                    return
+                    return 1
                 elif (len(direction) > 1 and direction[1] == "d"):
                     if (self.locs[self.turn] % 17 > 15):
                         #print("out of bounds")
@@ -300,16 +321,16 @@ class Board:
                 return -1
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] + 2 == self.locs[self.turn^1]):
-                if (self.locs[self.turn] + 4 > 0) and (self.locs[self.turn] + 3) not in self.walls:
+                if ((self.locs[self.turn]%17) + 4 < 17) and (self.locs[self.turn] + 3) not in self.walls:
                     self.locs[self.turn] += 4
                     self.checkWon()
                     self.turn = (self.turn ^ 1)
-                    return
+                    return 1
                 elif (len(direction) > 1 and direction[1] == "w"):
                     if (self.locs[self.turn] - 34 < 0):
                         #print("out of bounds")
                         return -1
-                    elif (self.locs[self.turn] -33) in self.walls:
+                    elif (self.locs[self.turn] -15) in self.walls:
                         #print("wall in the way")
                         return -1
                     else: 
@@ -320,7 +341,7 @@ class Board:
                     if (self.locs[self.turn] + 34 >= 17*17):
                         #print("out of bounds")
                         return -1
-                    elif (self.locs[self.turn] + 35) in self.walls:
+                    elif (self.locs[self.turn] + 19) in self.walls:
                         #print("wall in the way")
                         return -1
                     else: 
@@ -345,16 +366,16 @@ class Board:
                 return -1
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] - 2 == self.locs[self.turn^1]):
-                if (self.locs[self.turn] - 4 > 0) and (self.locs[self.turn] - 3) not in self.walls:
+                if (((self.locs[self.turn]) % 17) - 4 > 0) and (self.locs[self.turn] - 3) not in self.walls:
                     self.locs[self.turn] -= 4
                     self.checkWon()
                     self.turn = (self.turn ^ 1)
-                    return
+                    return 1
                 elif (len(direction) > 1 and direction[1] == "w"):
                     if (self.locs[self.turn] - 34 < 0):
                         #print("out of bounds")
                         return -1
-                    elif (self.locs[self.turn] - 35) in self.walls:
+                    elif (self.locs[self.turn] - 19) in self.walls:
                         #print("wall in the way")
                         return -1
                     else: 
@@ -365,7 +386,7 @@ class Board:
                     if (self.locs[self.turn] + 34 >= 17*17):
                         #print("out of bounds")
                         return -1
-                    elif (self.locs[self.turn] + 33) in self.walls:
+                    elif (self.locs[self.turn] + 15) in self.walls:
                         #print("wall in the way")
                         return -1
                     else: 
@@ -430,6 +451,39 @@ class Board:
             else:
                 boardstr += "  "
         print(boardstr)
+
+    def to_str(self):
+        boardstr = "*  1     2     3     4     5     6     7     8     9\n1 "
+        for r in range(17):
+            for c in range(17):
+                if (r*17 + c) in self.walls:
+                    if (r % 2 == 0):
+                        boardstr += "\033[93m \u2016 \033[0m"
+                    elif (c % 2 == 0):
+                        boardstr += "\033[93m===\033[0m"
+                    elif (c % 1 == 0):
+                        boardstr += "\033[93m * \033[0m"
+                elif (r*17 + c) == self.locs[0]:
+                    boardstr += "\033[91m \u25C9 \033[0m"
+                elif (r*17 + c) == self.locs[1]:
+                    boardstr += "\033[96m \u25D9 \033[0m"
+                else:
+                    if (r % 2 == 0):
+                        if (c % 2 == 1):
+                            boardstr += " | "
+                        else:
+                            boardstr += "   "
+                    else:
+                        if (c % 2 == 1):
+                            boardstr += "   "
+                        else:
+                            boardstr += "---"
+            boardstr += "\n"
+            if (r % 2 == 1):
+                boardstr += str(r//2 + 2) + " "
+            else:
+                boardstr += "  "
+        return boardstr
         
     def play(self):
         self.printboard()
