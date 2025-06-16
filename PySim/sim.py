@@ -10,7 +10,7 @@ while not board.won:
         runs = 0
         start = time.time()
         node = Node(board)
-        while (time.time() - start) < 2:
+        while (time.time() - start) < 1:
             node.run()
             runs += 1
         print(runs)
@@ -37,7 +37,7 @@ while not board.won:
         runs = 0
         start = time.time()
         node = Node(board)
-        while (time.time() - start) < 2:
+        while (time.time() - start) < 5:
             node.run()
             runs += 1
         print(runs)

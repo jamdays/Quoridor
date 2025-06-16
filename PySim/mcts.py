@@ -15,7 +15,12 @@ class Node:
         while node.n != 0:
             if len(node.children) == 0: 
                 node.generate_children()
-                node = node.children[random.randint(0, len(node.children) -1)]
+                if len(node.children) == 0:
+                    #because turn is opposite
+                    node.backprop((node.board.turn*2) - 1)
+                    return
+                else:
+                    node = node.children[random.randint(0, len(node.children) -1)]
             else:
                 node = node.best_child(1.4)
         node.backprop(node.full_biased_rollout())
@@ -115,14 +120,15 @@ class Node:
         return
 
     def generate_children(self):
-        for i in range(17*17):
-            newboard = self.board.copy()
-            if (newboard.wall(i) != -1):
-                child = Node(newboard.copy())
-                child.parent = self
-                self.children.append(child)
-                if self.board == child.board:
-                    print("LINE 125 board")
+        if (self.board.num_walls[self.board.turn] > 0):
+            for i in range(17*17):
+                newboard = self.board.copy()
+                if (newboard.wall(i) != -1):
+                    child = Node(newboard.copy())
+                    child.parent = self
+                    self.children.append(child)
+                    if self.board == child.board:
+                        print("LINE 125 board")
         moves = ["w", "a", "s", "d"]
         ws = ["wa", "wd"]
         ss = ["sa", "sd"]
