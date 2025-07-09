@@ -1,20 +1,20 @@
 class Board:
-    def __init__(self, locs=[0*17 + 8, 16*17 + 8], num_walls=[10,10], walls=set(), turn=0, won=False):
+    def __init__(self, locs=[0*17 + 8, 16*17 + 8], num_walls=[10,10], walls=set(), turn=0, won=False, plays=[], playstack=[]):
         ##Check that set and array copy are deep copies
         self.locs = [locs[0], locs[1]]
         self.num_walls = [num_walls[0], num_walls[1]]
         self.walls = set(walls)
         self.won = won
         self.turn = turn
-        self.plays = []
-        self.playstack = []
+        self.plays = list(plays)
+        self.playstack = list(playstack)
 
     def __eq__(self, other):
         return self.locs[0] == other.locs[0] and self.locs[0] == other.locs[0] and \
                 self.walls == other.walls and self.turn == other.turn
 
     def copy(self):
-        return Board(self.locs, self.num_walls, self.walls, self.turn, self.won)
+        return Board(self.locs, self.num_walls, self.walls, self.turn, self.won, self.plays, self.playstack)
     
     def path_lens(self):
         visited = set()
