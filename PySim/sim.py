@@ -2,6 +2,63 @@ from mcts import Node
 from board import Board
 import time
 
+'''
+choose the child node by which one has been visited the most
+returns child node
+'''
+def choose_by_visits(player, node):
+    board = node.children[0].board
+    max_n = node.children[0].n
+    max_wr = node.children[0].w/(node.children[0].n + 1)
+    compare = lambda x,y: x < y
+    if player == 0:
+        compare = lambda x,y: x > y
+        
+    for child in node.children:
+        if child.board.won:
+            board = child.board
+            board.printboard()
+            break
+        if child.n > max_n:
+           max_wr = child.w/(child.n + 1)
+           max_n = child.n
+           board = child.board
+        # and child.w/(child.n + 1) < max_wr because of switching players
+        elif abs(child.n - max_n) < 2 and compare(child.w/(child.n + 1), max_wr):
+            max_wr = child.w/(child.n + 1)
+            max_n = child.n
+            board = child.board
+    return board
+
+
+'''
+choose the child node by which one has the highest win rate
+returns child node
+'''
+def choose_by_wr(player, node):
+    board = node.children[0].board
+    max_n = node.children[0].n
+    max_wr = node.children[0].w/(node.children[0].n + 1)
+    compare = lambda x,y: x < y
+    if player == 0:
+        compare = lambda x,y: x > y
+        
+    for child in node.children:
+        if child.board.won:
+            board = child.board
+            board.printboard()
+            break
+        if compare(child.w/(child.n + 1), max_wr):
+           max_wr = child.w/(child.n + 1)
+           max_n = child.n
+           board = child.board
+        # and child.w/(child.n + 1) < max_wr because of switching players
+        elif child.n > max_n:
+            max_wr = child.w/(child.n + 1)
+            max_n = child.n
+            board = child.board
+    return board
+
 num_runs = int(input("how many simulations? (please enter an integer)"))
 logging = input("logging enabled? (y/n)") != "n"
 log = None
@@ -18,6 +75,9 @@ one_expansion = False
 two_expansion = False
 one_move_time = 2
 two_move_time = 2
+one_chooser = lambda x: choose_by_visits(0, x)
+two_chooser = lambda x: choose_by_visits(1, x)
+
 if (input("advanced options? (y/n)") != "n"):
     one_rp = float(input("level of bias towards moving for player one? (.5 = 50%)"))
     two_rp = float(input("level of bias towards moving for player two?"))
@@ -25,10 +85,16 @@ if (input("advanced options? (y/n)") != "n"):
     two_expansion = input("full or progressive expansions for player two? (f/p)") == "p"
     one_move_time = float(input("move time for player one? (seconds)"))
     two_move_time = float(input("move time for player two? (seconds)"))
+    if input("choose child by visits or winrate for player one? (w/v)") == 'w':
+        one_chooser = lambda x: choose_by_wr(0, x)
+    if input("choose child by visits or winrate for player two?") == 'w':
+        two_chooser = lambda x: choose_by_wr(1, x)
 
 game_count = 1
 
 while num_runs > 0:
+    if logging:
+        print("Game " + str(game_count), file=log)
     print("Starting game " + str(game_count))
     board = Board()
     while not board.won:
@@ -44,23 +110,8 @@ while num_runs > 0:
             print(runs)
             if logging:
                 print(runs, file=log)
-            board = node.children[0].board
-            max_n = node.children[0].n
-            max_wr = node.children[0].w/(node.children[0].n + 1)
-            for child in node.children:
-                ##child.board.printboard()
-                if child.board.won:
-                    board = child.board
-                    board.printboard()
-                    break
-                if child.n > max_n:
-                    max_wr = child.w/(child.n + 1)
-                    max_n = child.n
-                    board = child.board
-                elif abs(child.n - max_n) < 2 and child.w/(child.n + 1) > max_wr:
-                    max_wr = child.w/(child.n + 1)
-                    max_n = child.n
-                    board = child.board
+
+            board = choose_by_visits(0, node)
 
             if board.turn != 1:
                 print("FAIL")
@@ -79,33 +130,19 @@ while num_runs > 0:
             print(runs)
             if logging:
                 print(runs, file=log)
-            board = node.children[0].board
-            max_n = node.children[0].n
-            max_wr = node.children[0].w/(node.children[0].n + 1)
-            for child in node.children:
-                if child.board.won:
-                    board = child.board
-                    board.printboard()
-                    break
-                if child.n > max_n:
-                   max_wr = child.w/(child.n + 1)
-                   max_n = child.n
-                   board = child.board
-                # and child.w/(child.n + 1) < max_wr because of switching players
-                elif abs(child.n - max_n) < 2 and child.w/(child.n + 1) < max_wr:
-                    max_wr = child.w/(child.n + 1)
-                    max_n = child.n
-                    board = child.board
+
+            board = choose_by_visits(1, node)
 
             if board.turn != 0:
                 board.printboard()
                 break
     if logging:
         print(board.turn, file=log)
-        print(board.playstack, file=log)
+        print(board.plays, file=log)
     print("Finished game " + str(game_count))
     game_count += 1
     num_runs -= 1
 
 ## close log file
-log.close()
+if logging:
+    log.close()

@@ -181,7 +181,7 @@ class Board:
                 self.walls.add(k)
                 self.walls.add(k + 1)
                 self.walls.add(k + 2)
-                self.plays.append(self.canWin())
+                self.plays.append(k)
                 if not self.canWin():
                     self.plays.pop()
                     self.walls.remove(k)
@@ -199,7 +199,7 @@ class Board:
                 self.walls.add(k)
                 self.walls.add(k + 17)
                 self.walls.add(k + 34)
-                self.plays.append(self.canWin())
+                self.plays.append(k)
                 if not self.canWin():
                     self.plays.pop()
                     self.walls.remove(k)
@@ -232,6 +232,7 @@ class Board:
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] - 34 == self.locs[self.turn^1]):
                 if (self.locs[self.turn] - 68 > 0) and (self.locs[self.turn] - 51) not in self.walls:
+                    self.plays.append(direction[0])
                     self.locs[self.turn] -= 68
                     self.checkWon()
                     self.turn = (self.turn ^ 1)
@@ -244,6 +245,7 @@ class Board:
                         #print("wall in the way")
                         return -1
                     else: 
+                        self.plays.append(direction)
                         self.locs[self.turn] -= 32
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
@@ -255,6 +257,7 @@ class Board:
                         #print("wall in the way")
                         return -1
                     else: 
+                        self.plays.append(direction)
                         self.locs[self.turn] -= 36
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
@@ -263,6 +266,7 @@ class Board:
                     return -1
             ##END CODE FOR HANDLING JUMP RULE
             else: 
+                self.plays.append(direction[0])
                 self.locs[self.turn] -= 34
                 self.checkWon()
                 self.turn = (self.turn ^ 1)
@@ -277,6 +281,7 @@ class Board:
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] + 34 == self.locs[self.turn^1]):
                 if (self.locs[self.turn] + 68 < 17*17) and (self.locs[self.turn] + 51) not in self.walls:
+                    self.plays.append(direction[0])
                     self.locs[self.turn] += 68
                     self.checkWon()
                     self.turn = (self.turn ^ 1)
@@ -289,6 +294,7 @@ class Board:
                         #print("wall in the way")
                         return -1
                     else: 
+                        self.plays.append(direction)
                         self.locs[self.turn] += 36
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
@@ -300,6 +306,7 @@ class Board:
                         #print("wall in the way")
                         return -1
                     else: 
+                        self.plays.append(direction)
                         self.locs[self.turn] += 32
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
@@ -308,6 +315,7 @@ class Board:
                     return -1
             ##END CODE FOR HANDLING JUMP RULE
             else: 
+                self.plays.append(direction[0])
                 self.locs[self.turn] += 34
                 self.checkWon()
                 self.turn = (self.turn ^ 1)
@@ -322,6 +330,7 @@ class Board:
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] + 2 == self.locs[self.turn^1]):
                 if ((self.locs[self.turn]%17) + 4 < 17) and (self.locs[self.turn] + 3) not in self.walls:
+                    self.plays.append(direction[0])
                     self.locs[self.turn] += 4
                     self.checkWon()
                     self.turn = (self.turn ^ 1)
@@ -334,6 +343,7 @@ class Board:
                         #print("wall in the way")
                         return -1
                     else: 
+                        self.plays.append(direction)
                         self.locs[self.turn] -= 32
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
@@ -345,6 +355,7 @@ class Board:
                         #print("wall in the way")
                         return -1
                     else: 
+                        self.plays.append(direction)
                         self.locs[self.turn] += 36
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
@@ -353,6 +364,7 @@ class Board:
                     return -1
             ##END CODE FOR HANDLING JUMP RULE
             else: 
+                self.plays.append(direction[0])
                 self.locs[self.turn] += 2
                 self.checkWon()
                 self.turn = (self.turn ^ 1)
@@ -367,6 +379,7 @@ class Board:
             ##CODE FOR HANDLING JUMP RULE
             elif (self.locs[self.turn] - 2 == self.locs[self.turn^1]):
                 if (((self.locs[self.turn]) % 17) - 4 > 0) and (self.locs[self.turn] - 3) not in self.walls:
+                    self.plays.append(direction[0])
                     self.locs[self.turn] -= 4
                     self.checkWon()
                     self.turn = (self.turn ^ 1)
@@ -379,6 +392,7 @@ class Board:
                         #print("wall in the way")
                         return -1
                     else: 
+                        self.plays.append(direction)
                         self.locs[self.turn] -= 36
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
@@ -390,6 +404,7 @@ class Board:
                         #print("wall in the way")
                         return -1
                     else: 
+                        self.plays.append(direction)
                         self.locs[self.turn] += 32
                         self.checkWon()
                         self.turn = (self.turn ^ 1)
@@ -398,6 +413,7 @@ class Board:
                     return -1
             ##END CODE FOR HANDLING JUMP RULE
             else: 
+                self.plays.append(direction[0])
                 self.locs[self.turn] -= 2
                 self.checkWon()
                 self.turn = (self.turn ^ 1)
