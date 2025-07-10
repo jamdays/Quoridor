@@ -59,6 +59,12 @@ def choose_by_wr(player, node):
             board = child.board
     return board
 
+
+'''
+START CONFIG
+'''
+
+quiet = input("quiet? (y/n)") == "y"
 num_runs = int(input("how many simulations? (please enter an integer)"))
 logging = input("logging enabled? (y/n)") != "n"
 log = None
@@ -90,56 +96,107 @@ if (input("advanced options? (y/n)") != "n"):
     if input("choose child by visits or winrate for player two?") == 'w':
         two_chooser = lambda x: choose_by_wr(1, x)
 
+
+'''
+player one default configuration
+'''
+def player_one_default(board):
+    if not quiet:
+        board.printboard()
+        print(board.num_walls)
+    runs = 0
+    start = time.time()
+    node = Node(board, one_rp, one_expansion)
+    while (time.time() - start) < one_move_time:
+        node.run()
+        runs += 1
+    if not quiet:
+        print(runs)
+    if logging:
+        print(runs, file=log)
+
+    return choose_by_visits(0, node)
+
+
+'''
+player two default configuration
+'''
+def player_two_default(board):
+    if not quiet:
+        board.printboard()
+    runs = 0
+    start = time.time()
+    node = Node(board, two_rp, two_expansion)
+    while (time.time() - start) < two_move_time:
+        node.run()
+        runs += 1
+    if not quiet:
+        print(runs)
+    if logging:
+        print(runs, file=log)
+
+    return choose_by_visits(1, node)
+
+def user_play(board):
+    board.printboard()
+    board.prompt()
+    return board
+
+def basline_agent(board):
+    if not quiet:
+        board.printboard()
+    board.follow_shortest()
+    return board
+
+play_one = player_one_default
+play_two = player_two_default
+
+if input("play with user input?(y/n)") == 'y':
+    if input("player one user input?(y/n)") == 'y':
+        play_one = user_play 
+    if input("player two user input?(y/n)") == 'y':
+        play_two = user_play 
+
+if input("play with basline agent?(y/n)") == 'y':
+    if input("player one baslien agent?(y/n)") == 'y':
+        play_one = basline_agent
+    if input("player two baseline agent?") == 'y':
+        play_two = user_play 
+'''
+END  CONFIG
+'''
+
+
+
+
+
+'''
+START SIMULATION
+'''
 game_count = 1
 
 while num_runs > 0:
     if logging:
         print("Game " + str(game_count), file=log)
-    print("Starting game " + str(game_count))
+        
+    if not quiet:
+        print("Starting game " + str(game_count))
     board = Board()
     while not board.won:
         if board.turn == 0:
-            board.printboard()
-            print(board.num_walls)
-            runs = 0
-            start = time.time()
-            node = Node(board, one_rp, one_expansion)
-            while (time.time() - start) < one_move_time:
-                node.run()
-                runs += 1
-            print(runs)
-            if logging:
-                print(runs, file=log)
-
-            board = choose_by_visits(0, node)
-
-            if board.turn != 1:
-                print("FAIL")
-                board.printboard()
-                break
-            ##board.printboard()
-            ##board.prompt()
+            board = play_one(board)
         else:
-            board.printboard()
-            runs = 0
-            start = time.time()
-            node = Node(board, two_rp, two_expansion)
-            while (time.time() - start) < two_move_time:
-                node.run()
-                runs += 1
-            print(runs)
-            if logging:
-                print(runs, file=log)
-
-            board = choose_by_visits(1, node)
-
-            if board.turn != 0:
-                board.printboard()
-                break
+            board = play_two(board)
+        if len(board.playstack) > 150:
+            break
     if logging:
-        print(board.turn, file=log)
+        if board.won: 
+            print(board.turn, file=log)
+        else:
+            print("-1", file=log)
         print(board.plays, file=log)
-    print("Finished game " + str(game_count))
+    if not quiet:
+        print("Finished game " + str(game_count))
     game_count += 1
     num_runs -= 1
 

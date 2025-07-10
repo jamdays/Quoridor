@@ -218,6 +218,9 @@ class Board:
         self.checkWon()
         self.turn = self.turn ^ 1
 
+    def follow_shortest(self):
+        self.move_num(self.get_shortest_path_move())
+
 
     def move(self, direction):
         if self.won:
