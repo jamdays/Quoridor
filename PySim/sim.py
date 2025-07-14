@@ -77,6 +77,8 @@ if (logging):
         exit()
 one_rp = .7
 two_rp = .7
+one_spp = .5
+one_spp = .5
 one_expansion = False
 two_expansion = False
 one_move_time = 2
@@ -87,6 +89,8 @@ two_chooser = lambda x: choose_by_visits(1, x)
 if (input("advanced options? (y/n)") != "n"):
     one_rp = float(input("level of bias towards moving for player one? (.5 = 50%)"))
     two_rp = float(input("level of bias towards moving for player two?"))
+    one_spp = float(input("level of bias towards moving to shortest path for player one? (.5 = 50%)"))
+    two_spp = float(input("level of bias towards moving to shortest path for player two?"))
     one_expansion = input("full or progressive expansions for player one? (f/p)") == "p"
     two_expansion = input("full or progressive expansions for player two? (f/p)") == "p"
     one_move_time = float(input("move time for player one? (seconds)"))
