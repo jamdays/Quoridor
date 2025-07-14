@@ -3,7 +3,13 @@ import random
 from board import Board
 
 class Node:
-    def __init__(self, board, rp, progressive=False):
+    '''
+    @param board, starting board
+    @param rp, rollout percentage which the bot moves at
+    @param spp, shortest path percentage, when the bot moves, how often it moves onto the shortest path
+    @progressive, progressive or full rollout (full when false; progressive when true)
+    '''
+    def __init__(self, board, rp, spp, progressive=False):
         self.parent = None
         self.board = board
         self.w = 0
@@ -12,11 +18,16 @@ class Node:
         self.choose = self.best_child 
         self.generator = self.generate_children
         self.rp = rp
+        self.spp = spp
         if (progressive):
             self.child_q = []
             self.choose = self.progressive_expansion_choice
             self.generator = self.prog_generator
+
     
+    '''
+    run mcts with full biased rollout (the other rollout options are very bad)
+    '''
     def run(self):
         node = self
         while node.n != 0:
@@ -31,6 +42,7 @@ class Node:
             else:
                 node = node.choose(1.4)
         node.backprop(node.full_biased_rollout())
+
 
     '''
     progressive expansion logic
@@ -55,6 +67,7 @@ class Node:
         self.generate_child_q()
         self.make_new_child();
 
+
     '''
     Make new child for progressive expansion
     '''
@@ -64,12 +77,12 @@ class Node:
             return
         move = self.child_q.pop()
         if (isinstance(move, int)):
-            child = Node(self.board.copy(), self.rp, progressive=True)
+            child = Node(self.board.copy(), self.rp, self.spp, progressive=True)
             child.board.wall(move)
             child.parent = self
             self.children.append(child)
         else:
-            child = Node(self.board.copy(), self.rp, progressive=True)
+            child = Node(self.board.copy(), self.rp, self.spp, progressive=True)
             child.board.move(move)
             child.parent = self
             self.children.append(child)
@@ -137,7 +150,7 @@ class Node:
         moves = ["wa", "wd", "aw", "as", "sa", "sd", "dw", "ds"]
         while not sim.won:
             if (random.random() < self.rp or sim.num_walls[sim.turn] == 0):
-                if (random.random() > .6):
+                if (random.random() < self.spp):
                     sim.move_num(sim.get_shortest_path_move())
                 else:
                     sim.move(moves[random.randint(0,7)])
@@ -177,7 +190,7 @@ class Node:
             for i in range(17*17):
                 newboard = self.board.copy()
                 if (newboard.wall(i) != -1):
-                    child = Node(newboard.copy(), self.rp)
+                    child = Node(newboard.copy(), self.rp, self.spp)
                     child.parent = self
                     self.children.append(child)
                     if self.board == child.board:
@@ -190,7 +203,7 @@ class Node:
         for move in moves:
             newboard = self.board.copy()
             if (newboard.move(move) == 1):
-                child = Node(newboard.copy(), self.rp)
+                child = Node(newboard.copy(), self.rp, self.spp)
                 child.parent = self
                 self.children.append(child)
                 if self.board == child.board:
@@ -199,7 +212,7 @@ class Node:
                 for w in ws:
                     new_other_board = self.board.copy()
                     if (new_other_board.move(w) == 1):
-                        child = Node(new_other_board.copy(), self.rp)
+                        child = Node(new_other_board.copy(), self.rp, self.spp)
                         child.parent = self
                         self.children.append(child)
                         if self.board == child.board:
@@ -208,7 +221,7 @@ class Node:
                 for a in ehs:
                     new_other_board = self.board.copy()
                     if (new_other_board.move(a) == 1):
-                        child = Node(new_other_board.copy(), self.rp)
+                        child = Node(new_other_board.copy(), self.rp, self.spp)
                         child.parent = self
                         self.children.append(child)
                         if self.board == child.board:
@@ -217,7 +230,7 @@ class Node:
                 for d in ds:
                     new_other_board = self.board.copy()
                     if (new_other_board.move(d) == 1):
-                        child = Node(new_other_board.copy(), self.rp)
+                        child = Node(new_other_board.copy(), self.rp, self.spp)
                         child.parent = self
                         self.children.append(child)
                         if self.board == child.board:
@@ -226,7 +239,7 @@ class Node:
                 for s in ss:
                     new_other_board = self.board.copy()
                     if (new_other_board.move(s) == 1):
-                        child = Node(new_other_board.copy(), self.rp)
+                        child = Node(new_other_board.copy(), self.rp, self.spp)
                         child.parent = self
                         self.children.append(child)
                         if self.board == child.board:
