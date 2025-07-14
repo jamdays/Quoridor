@@ -1,6 +1,6 @@
 #!/bin/bash
 
-{ echo "y";
+{ echo "n";
  echo 10;
  echo y;
  echo "logs/mctsvbaseline.txt"
