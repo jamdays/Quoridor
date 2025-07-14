@@ -181,6 +181,7 @@ game_count = 1
 
 while num_runs > 0:
     if logging:
+        print(game_count)
         print("Game " + str(game_count), file=log)
         
     if not quiet:
