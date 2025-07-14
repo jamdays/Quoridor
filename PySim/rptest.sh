@@ -3,12 +3,12 @@
 { echo "n";
  echo 5;
  echo y;
- echo "logs/spplog.txt"
+ echo "logs/rplog.txt"
  echo y;
+ echo .99;
  echo .9;
  echo .9;
  echo .9;
- echo .5;
  echo p;
  echo p;
  echo 4;

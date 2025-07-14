@@ -3,12 +3,12 @@
 { echo "n";
  echo 5;
  echo y;
- echo "logs/spplog.txt"
+ echo "logs/mctsvbaseline22.txt"
  echo y;
  echo .9;
  echo .9;
  echo .9;
- echo .5;
+ echo .9;
  echo p;
  echo p;
  echo 4;

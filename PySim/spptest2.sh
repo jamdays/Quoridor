@@ -3,7 +3,7 @@
 { echo "n";
  echo 5;
  echo y;
- echo "logs/spplog.txt"
+ echo "logs/spplog22.txt"
  echo y;
  echo .9;
  echo .9;
