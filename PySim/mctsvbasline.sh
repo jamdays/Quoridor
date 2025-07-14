@@ -3,7 +3,7 @@
 { echo "n";
  echo 10;
  echo y;
- echo "logs/mctsvbaseline.txt"
+ echo "logs/$1"
  echo y;
  echo .9;
  echo .9;

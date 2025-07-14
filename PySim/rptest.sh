@@ -3,7 +3,7 @@
 { echo "n";
  echo 5;
  echo y;
- echo "logs/rplog.txt"
+ echo "logs/$1"
  echo y;
  echo .99;
  echo .9;
