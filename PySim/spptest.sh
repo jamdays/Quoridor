@@ -15,11 +15,7 @@
  echo 4;
  echo w;
  echo w;
- echo y;
- echo y;
  echo n;
- echo y;
- echo y;
  echo n;
  cat;
 }| python3 sim.py
