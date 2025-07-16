@@ -151,7 +151,7 @@ class Node:
         while not sim.won:
             if (random.random() < self.rp or sim.num_walls[sim.turn] == 0):
                 if (random.random() < self.spp):
-                    sim.move_num(sim.get_shortest_path_move())
+                    sim.follow_shortest()
                 else:
                     sim.move(moves[random.randint(0,7)])
             else:

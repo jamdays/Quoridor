@@ -150,6 +150,7 @@ def basline_agent(board):
     if not quiet:
         board.printboard()
     board.follow_shortest()
+
     return board
 
 play_one = player_one_default
@@ -192,9 +193,15 @@ while num_runs > 0:
             print(len(board.playstack))
             print(board.num_walls)
         if board.turn == 0:
-            board = play_one(board)
+            if (board.num_walls[0] + board.num_walls[1] != 0):
+                board = play_one(board)
+            else:
+                board = basline_agent(board)
         else:
-            board = play_two(board)
+            if (board.num_walls[0] + board.num_walls[1] != 0):
+                board = play_two(board)
+            else:
+                board = basline_agent(board)
         if len(board.playstack) > 99:
             break
     if logging:

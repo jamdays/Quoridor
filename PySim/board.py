@@ -84,36 +84,42 @@ class Board:
         return (one_path_length, two_path_length)
                 
     def get_shortest_path_move(self):
-        visited = set()
+        visited = {self.locs[self.turn]}
         queue = []
         idx = 0
         one_path_length = float('inf')
         queue.append((self.locs[self.turn], 0, None))
+        node = None
         goal = lambda x: x >= 16*17
         if self.turn == 1:
             goal = lambda x: x < 17
         while queue:
-            if goal(queue[idx][0]):
-                one_path_length = queue[idx][1]
+            node = queue.pop(0)
+            if goal(node[0]):
+                one_path_length = node[1]
                 break
-            visited.add(queue[idx][0])
-            curr = queue[idx][0]
+            curr = node[0]
             ## TODO can fix this to be pointers instead cus this is wasteful
             if curr > 17 and curr - 17 not in self.walls and curr - 34 not in visited:
-                queue.append((curr - 34, queue[idx][1]+1, queue[idx]))
+                visited.add(curr - 34)
+                queue.append((curr - 34, node[1]+1, node))
             if curr < 17*16 and curr + 17 not in self.walls and curr + 34 not in visited:
-                queue.append((curr + 34, queue[idx][1]+1, queue[idx]))
+                visited.add(curr + 34)
+                queue.append((curr + 34, node[1]+1, node))
             if curr % 17 > 1 and curr - 1 not in self.walls and curr - 2 not in visited:
-                queue.append((curr - 2, queue[idx][1]+1, queue[idx]))
+                visited.add(curr - 2)
+                queue.append((curr - 2, node[1]+1, node))
             if curr % 17 < 16 and curr + 1 not in self.walls and curr + 2 not in visited:
-                queue.append((curr + 2, queue[idx][1]+1, queue[idx]))
-            idx += 1
-        part = queue[idx]
+                visited.add(curr + 2)
+                queue.append((curr + 2, node[1]+1, node))
+        part = node
+        prev = node
         while part[2] is not None:
             if part[2][2] == None:
-                return part[0]
+                return (part[0], prev[0])
+            prev = part
             part = part[2]
-        return part[0]
+        return (part[0], prev[0])
 
     def canWin(self):
         visited = set()
@@ -219,7 +225,18 @@ class Board:
         self.turn = self.turn ^ 1
 
     def follow_shortest(self):
-        self.move_num(self.get_shortest_path_move())
+        path = self.get_shortest_path_move()
+        move = path[0]
+        move_two = path[1]
+        move_dir = (move - self.locs[(self.turn)])/2
+        if (move != self.locs[(self.turn^1)]):
+            self.move_num(move)
+        elif (self.locs[self.turn] + move_dir*3) not in self.walls:
+            self.move_num(move + move_dir*2)
+        else:
+            self.move_num(move_two)
+            
+
 
 
     def move(self, direction):
