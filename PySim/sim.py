@@ -188,11 +188,14 @@ while num_runs > 0:
         print("Starting game " + str(game_count))
     board = Board()
     while not board.won:
+        if not quiet:
+            print(len(board.playstack))
+            print(board.num_walls)
         if board.turn == 0:
             board = play_one(board)
         else:
             board = play_two(board)
-        if len(board.playstack) > 150:
+        if len(board.playstack) > 99:
             break
     if logging:
         if board.won: 
