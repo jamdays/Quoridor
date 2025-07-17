@@ -2,27 +2,29 @@
 import sys
 
 def main():
+    '''
     if len(sys.argv) != 2:
         print("Usage: python analyze_binary_lines.py <filename>")
         sys.exit(1)
+    '''
 
-    filename = sys.argv[1]
     count_0 = 0
     count_1 = 0
     total = 0
-
     try:
-        with open(filename, 'r') as file:
-            for line in file:
-                line = line.strip()
-                if line == '0':
-                    count_0 += 1
-                    total += 1
-                elif line == '1':
-                    count_1 += 1
-                    total += 1
-               ## else:
-                    ##print(f"Warning: Ignoring invalid line '{line}'")
+        for i in range(len(sys.argv)):
+            filename = sys.argv[i]
+            with open(filename, 'r') as file:
+                for line in file:
+                    line = line.strip()
+                    if line == '0':
+                        count_0 += 1
+                        total += 1
+                    elif line == '1':
+                        count_1 += 1
+                        total += 1
+                   ## else:
+                        ##print(f"Warning: Ignoring invalid line '{line}'")
 
         if total == 0:
             print("No valid 0/1 lines found.")
