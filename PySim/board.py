@@ -238,10 +238,13 @@ class Board:
             check_bounds = lambda x: x > 16
 
         if (move != self.locs[(self.turn^1)]):
+            self.plays.append(move)
             self.move_num(move)
         elif (self.locs[self.turn] + move_dir*3) not in self.walls and check_bounds(move):
+            self.plays.append(move + move_dir*2)
             self.move_num(move + move_dir*2)
         else:
+            self.plays.append(move_two)
             self.move_num(move_two)
             
 
