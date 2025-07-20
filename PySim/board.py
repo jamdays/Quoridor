@@ -245,6 +245,25 @@ class Board:
             self.move_num(move_two)
             
 
+    def follow_shortest_or_wall(self): 
+        og_path_lens = self.path_lens()
+        best_path_diff = self.num_walls[self.turn] - self.num_walls[self.turn^1] - 1
+        best_move = -1
+        if self.num_walls[turn] > 0:
+            for i in range(17*17):
+                newboard = self.copy()
+                if newboard.wall(i) != -1:
+                    new_lens = newboard.path_lens()
+                    path_diff = self.num_walls[self.turn] - self.num_walls[self.turn^1]
+                    if path_diff < best_path_diff:
+                        best_path_diff = path_diff
+                        best_move = i
+        if best_move == -1:
+            self.follow_shortest()
+        else:
+            self.wall(best_move)
+
+        
 
 
     def move(self, direction):
