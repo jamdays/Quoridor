@@ -153,6 +153,12 @@ def basline_agent(board):
 
     return board
 
+def wall_basline_agent(board):
+    if not quiet:
+        board.printboard()
+    board.follow_shortest_or_wall()
+
+    return board
 play_one = player_one_default
 play_two = player_two_default
 
@@ -164,9 +170,15 @@ if input("play with user input?(y/n)") == 'y':
 
 if input("play with basline agent?(y/n)") == 'y':
     if input("player one baslien agent?(y/n)") == 'y':
-        play_one = basline_agent
+        if input("baseline with walls or basic? (w/b)") == 'w':
+            play_one = wall_basline_agent
+        else: 
+            play_one = basline_agent
     if input("player two baseline agent?") == 'y':
-        play_two = user_play 
+        if input("baseline with walls or basic? (w/b)") == 'w':
+            play_two = wall_basline_agent
+        else: 
+            play_two = basline_agent
 '''
 END  CONFIG
 '''
