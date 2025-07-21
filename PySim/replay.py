@@ -13,32 +13,10 @@ def clear_screen():
 
 def to_move(logged_move):
     try:
-        return int(logged_move)
+        return int(float(logged_move))
     except:
         return logged_move[1:len(logged_move)-1]
     
-def key_release(e):
-    if e.name == "left":
-        if idx > -1:
-            idx -= 1
-            board = Board()
-            for i in range(idx + 1):
-                if isinstance(game[i], int):
-                    board.wall(game[i])
-                else:
-                    board.move(game[i])
-            board.printboard()
-    elif e.name == "right":
-        if idx < (len(game) - 1):
-            idx += 1
-            board = Board()
-            for i in range(idx + 1):
-                if isinstance(game[i], int):
-                    board.wall(game[i])
-                else:
-                    board.move(game[i])
-            board.printboard()
-
 def main():
 
     try:
@@ -68,12 +46,15 @@ def main():
                     board = Board()
                     for i in range(idx + 1):
                         if isinstance(game[i], int):
+                            print(board.turn)
                             if board.wall(game[i]) == -1:
+                                print(board.turn)
                                 board.move_num(game[i])
                         else:
-                            board.move(game[i]) == -1
+                            board.move(game[i])
                     clear_screen()
                     board.printboard()
+                    print(game[i])
             elif keyboard.read_key() == "right":
                 if idx < (len(game) - 1):
                     idx += 1
@@ -86,6 +67,7 @@ def main():
                             board.move(game[i])
                     clear_screen()
                     board.printboard()
+                    print(game[i])
             continue
 
 
