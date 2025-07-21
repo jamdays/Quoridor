@@ -252,7 +252,7 @@ class Board:
         og_path_lens = self.path_lens()
         best_path_diff = self.num_walls[self.turn] - self.num_walls[self.turn^1] - 1
         best_move = -1
-        if self.num_walls[turn] > 0:
+        if self.num_walls[self.turn] > 0:
             for i in range(17*17):
                 newboard = self.copy()
                 if newboard.wall(i) != -1:
