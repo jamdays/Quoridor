@@ -80,7 +80,8 @@ def main():
                     board = Board()
                     for i in range(idx + 1):
                         if isinstance(game[i], int):
-                            board.wall(game[i])
+                            if board.wall(game[i]) == -1:
+                                board.move_num(game[i])
                         else:
                             board.move(game[i])
                     clear_screen()
