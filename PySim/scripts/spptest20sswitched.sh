@@ -2,18 +2,18 @@
 
 cd /h/u13/c3/01/djayamax/Documents/Quoridor/PySim
 { echo "n";
- echo 1;
+ echo 5;
  echo y;
- echo "logs/extra_long_spp_switched/log$1.txt"
+ echo "logs/20s_p2_lower_spp/log$1.txt"
  echo y;
+ echo .9;
  echo .9;
  echo .9;
  echo .5;
- echo .9;
  echo p;
  echo p;
- echo 80;
- echo 80;
+ echo 20;
+ echo 20;
  echo w;
  echo w;
  echo n;
