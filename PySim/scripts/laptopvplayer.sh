@@ -1,7 +1,6 @@
 #!/bin/bash
 
-cd /h/u13/c3/01/djayamax/Documents/Quoridor/PySim
-
+cd /home/md/Documents/UofT/Summer-2025/QuoridorProject/PySim 
 { echo "n";
  echo 1;
  echo n;
@@ -17,8 +16,8 @@ cd /h/u13/c3/01/djayamax/Documents/Quoridor/PySim
  echo w;
  echo w;
  echo y;
- echo n;
  echo y;
+ echo n;
  echo n;
  cat;
 }| python3 sim.py
