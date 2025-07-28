@@ -2,7 +2,7 @@
 
 cd /h/u13/c3/01/djayamax/Documents/Quoridor/PySim
 { echo "n";
- echo 2;
+ echo 1;
  echo y;
  echo "logs/super_long_spp/log$1.txt"
  echo y;
