@@ -1,25 +1,22 @@
 #!/bin/bash
 
 cd /h/u13/c3/01/djayamax/Documents/Quoridor/PySim
-
 { echo "n";
  echo 1;
  echo y;
- echo logs/issac.txt;
+ echo "logs/ldsppextralong/log$1"
  echo y;
  echo .9;
  echo .9;
- echo .5;
- echo .5;
+ echo .9;
+ echo .1;
  echo p;
  echo p;
- echo 10;
- echo 10;
+ echo 100;
+ echo 100;
  echo w;
  echo w;
- echo y;
  echo n;
- echo y;
  echo n;
  cat;
 }| python3 sim.py
