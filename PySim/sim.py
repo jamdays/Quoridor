@@ -75,16 +75,17 @@ if (logging):
     except:
         print("could not open file")
         exit()
-one_rp = .7
-two_rp = .7
-one_spp = .5
-one_spp = .5
-one_expansion = False
-two_expansion = False
+one_rp = .9
+two_rp = .9
+one_spp = .9
+one_spp = .9
+one_expansion = True
+two_expansion = True
 one_move_time = 2
 two_move_time = 2
 one_chooser = lambda x: choose_by_visits(0, x)
 two_chooser = lambda x: choose_by_visits(1, x)
+checker ="Default"
 
 if (input("advanced options? (y/n)") != "n"):
     one_rp = float(input("level of bias towards moving for player one? (.5 = 50%)"))
@@ -95,10 +96,11 @@ if (input("advanced options? (y/n)") != "n"):
     two_expansion = input("full or progressive expansions for player two? (f/p)") == "p"
     one_move_time = float(input("move time for player one? (seconds)"))
     two_move_time = float(input("move time for player two? (seconds)"))
-    if input("choose child by visits or winrate for player one? (w/v)") == 'w':
-        one_chooser = lambda x: choose_by_wr(0, x)
-    if input("choose child by visits or winrate for player two?") == 'w':
-        two_chooser = lambda x: choose_by_wr(1, x)
+    if input("choose child by visits or winrate for player one? (wr/v)") != 'wr':
+        one_chooser = lambda x: choose_by_visits(0, x)
+    if input("choose child by visits or winrate for player two?") == 'wr':
+        two_chooser = lambda x: choose_by_visits(1, x)
+    checker = input("check by Default or UF? (Default/UF)")
 
 
 '''
@@ -119,7 +121,7 @@ def player_one_default(board):
     if logging:
         print(runs, file=log)
 
-    return choose_by_visits(0, node)
+    return one_chooser(node)
 
 
 '''
@@ -139,7 +141,7 @@ def player_two_default(board):
     if logging:
         print(runs, file=log)
 
-    return choose_by_visits(1, node)
+    return two_chooser(node)
 
 def user_play(board):
     board.printboard()
@@ -199,7 +201,7 @@ while num_runs > 0:
         
     if not quiet:
         print("Starting game " + str(game_count))
-    board = Board()
+    board = Board(check=checker)
     while not board.won:
         if not quiet:
             print(len(board.playstack))

@@ -1,5 +1,7 @@
+from unionfind import unionfind
+
 class Board:
-    def __init__(self, locs=[0*17 + 8, 16*17 + 8], num_walls=[10,10], walls=set(), turn=0, won=False, plays=[], playstack=[]):
+    def __init__(self, locs=[0*17 + 8, 16*17 + 8], num_walls=[10,10], walls=set(), turn=0, won=False, plays=[], playstack=[], uf=unionfind(289 + 4), check="Default"):
         ##Check that set and array copy are deep copies
         self.locs = [locs[0], locs[1]]
         self.num_walls = [num_walls[0], num_walls[1]]
@@ -9,12 +11,24 @@ class Board:
         self.plays = list(plays)
         self.playstack = list(playstack)
 
+
+        # for UF win checking
+        self.uf = uf
+        self.top = 289
+        self.bottom = 290
+        self.left = 291
+        self.right = 292
+
+        self.check = check
+
+            
+
     def __eq__(self, other):
         return self.locs[0] == other.locs[0] and self.locs[0] == other.locs[0] and \
                 self.walls == other.walls and self.turn == other.turn
 
     def copy(self):
-        return Board(self.locs, self.num_walls, self.walls, self.turn, self.won, self.plays, self.playstack)
+        return Board(self.locs, self.num_walls, self.walls, self.turn, self.won, self.plays, self.playstack, self.uf, self.check)
     
     def path_lens(self):
         visited = set()
@@ -161,6 +175,60 @@ class Board:
                 stack.append(curr + 2)
         return two_done and one_done
 
+    def canWinUF(self, wall):
+        places = self.wall_to_tuple(wall)
+        if places == -1:
+            return False
+        places = {self.uf.find(x) for x in places}
+
+        do_check = False
+        if len(places) < 3:
+            do_check = True
+        elif self.uf.find(self.right) in places and self.uf.find(self.left) in places:
+            do_check = True
+        else:
+            for i in [self.uf.find(self.top), self.uf.find(self.bottom)]:
+                for j in [self.uf.find(self.left), self.uf.find(self.right)]:
+                    if i in places and j in places:
+                        do_check = True
+                        break
+                if do_check:
+                    break
+
+        if do_check and not self.canWin():
+            return False
+        places = [x for x in places]
+        for i in range(len(places) - 1):
+            self.uf.unite(places[i], places[i + 1])
+        return True
+        
+
+    # return the little parts of the wall for union find (the 
+    def wall_to_tuple(self, k):
+        if self.won:
+            return -1
+        if self.num_walls[self.turn] < 1:
+            return -1
+        if ((k % 17) > 15) or (k > 17*16):
+            ##print("wall placement out of bounds")
+            return -1
+        if (k//17 % 2) and  not ((k % 17) % 2):
+            #14 because k = left part of wall
+            if k % 17 > 0 and k % 17 < 14:
+                return (k + 1, k - 1, k + 3)
+            elif k % 17 > 0:
+                return (k + 1, k - 1, self.right)
+            elif k % 17 < 14:
+                return (k + 1, k + 3, self.left)
+        elif ((k % 17) % 2) and not (k//17 % 2):
+            if k - 17 > 0 and k + 51 < 17*17:
+                return (k + 17, k - 17, k + 51)
+            elif k - 17 > 0:
+                return (k + 17, k - 17, self.bottom)
+            elif k + 51 < 17*17:
+                return (k + 17, k + 51, self.top)
+        return -1
+
     def checkWon(self):
         if self.won:
             return
@@ -188,7 +256,12 @@ class Board:
                 self.walls.add(k + 1)
                 self.walls.add(k + 2)
                 self.plays.append(k)
-                if not self.canWin():
+                can = False
+                if self.check == "Default":
+                    can = self.canWin()
+                elif self.check == "UF":
+                    can = self.canWinUF(k)
+                if not can:
                     self.plays.pop()
                     self.walls.remove(k)
                     self.walls.remove(k + 1)
@@ -206,7 +279,12 @@ class Board:
                 self.walls.add(k + 17)
                 self.walls.add(k + 34)
                 self.plays.append(k)
-                if not self.canWin():
+                can = False
+                if self.check == "Default":
+                    can = self.canWin()
+                elif self.check == "UF":
+                    can = self.canWinUF(k)
+                if not can:
                     self.plays.pop()
                     self.walls.remove(k)
                     self.walls.remove(k + 17)
@@ -491,15 +569,15 @@ class Board:
             for c in range(17):
                 if (r*17 + c) in self.walls:
                     if (r % 2 == 0):
-                        boardstr += "\033[93m \u2016 \033[0m"
+                        boardstr += "\033[33m \u2016 \033[0m"
                     elif (c % 2 == 0):
-                        boardstr += "\033[93m===\033[0m"
+                        boardstr += "\033[33m===\033[0m"
                     elif (c % 1 == 0):
-                        boardstr += "\033[93m * \033[0m"
+                        boardstr += "\033[33m * \033[0m"
                 elif (r*17 + c) == self.locs[0]:
-                    boardstr += "\033[91m \u25C9 \033[0m"
+                    boardstr += "\033[31m \u25C9 \033[0m"
                 elif (r*17 + c) == self.locs[1]:
-                    boardstr += "\033[96m \u25D9 \033[0m"
+                    boardstr += "\033[36m \u25D9 \033[0m"
                 else:
                     if (r % 2 == 0):
                         if (c % 2 == 1):
@@ -524,15 +602,15 @@ class Board:
             for c in range(17):
                 if (r*17 + c) in self.walls:
                     if (r % 2 == 0):
-                        boardstr += "\033[93m \u2016 \033[0m"
+                        boardstr += "\033[33m \u2016 \033[0m"
                     elif (c % 2 == 0):
-                        boardstr += "\033[93m===\033[0m"
+                        boardstr += "\033[33m===\033[0m"
                     elif (c % 1 == 0):
-                        boardstr += "\033[93m * \033[0m"
+                        boardstr += "\033[33m * \033[0m"
                 elif (r*17 + c) == self.locs[0]:
-                    boardstr += "\033[91m \u25C9 \033[0m"
+                    boardstr += "\033[31m \u25C9 \033[0m"
                 elif (r*17 + c) == self.locs[1]:
-                    boardstr += "\033[96m \u25D9 \033[0m"
+                    boardstr += "\033[36m \u25D9 \033[0m"
                 else:
                     if (r % 2 == 0):
                         if (c % 2 == 1):
