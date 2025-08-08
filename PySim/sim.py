@@ -1,6 +1,7 @@
 from mcts import Node
 from board import Board
 import time
+import sys
 
 '''
 choose the child node by which one has been visited the most
@@ -86,6 +87,8 @@ two_move_time = 2
 one_chooser = lambda x: choose_by_visits(0, x)
 two_chooser = lambda x: choose_by_visits(1, x)
 checker ="Default"
+if len(sys.argv) > 2: 
+    checker = "UF"
 
 if (input("advanced options? (y/n)") != "n"):
     one_rp = float(input("level of bias towards moving for player one? (.5 = 50%)"))
@@ -100,7 +103,7 @@ if (input("advanced options? (y/n)") != "n"):
         one_chooser = lambda x: choose_by_visits(0, x)
     if input("choose child by visits or winrate for player two?") == 'wr':
         two_chooser = lambda x: choose_by_visits(1, x)
-    checker = input("check by Default or UF? (Default/UF)")
+
 
 
 '''
